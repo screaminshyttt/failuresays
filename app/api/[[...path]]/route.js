@@ -5,6 +5,12 @@ import { slugify, readingTime } from '@/lib/slug'
 import { v4 as uuid } from 'uuid'
 import { CATEGORY_MAP } from '@/lib/brand'
 
+// Prevent static analysis at build time — this route must run per-request
+// so env vars (MONGO_URL, JWT_SECRET, ADMIN_PASSWORD) are available.
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+export const revalidate = 0
+
 function json(data, init = {}) { return NextResponse.json(data, init) }
 function bad(msg, code = 400) { return json({ error: msg }, { status: code }) }
 
