@@ -19,9 +19,9 @@ const FadeIn = ({ children, delay = 0 }) => (
 function EditorialSection({ heading, children, first = false }) {
   return (
     <section className={`container-editorial ${first ? 'pt-16 md:pt-24' : 'pt-28 md:pt-40'} pb-16 md:pb-28`}>
-      {/* HEADING — massive, left-aligned */}
+      {/* HEADING — left-aligned, sized for editorial balance (not overwhelming) */}
       <FadeIn>
-        <h2 className="display uppercase leading-[0.86] tracking-[-0.01em] text-ink text-[88px] sm:text-[120px] md:text-[160px] lg:text-[200px] xl:text-[240px]">
+        <h2 className="display uppercase leading-[0.9] tracking-[-0.005em] text-ink text-[64px] sm:text-[84px] md:text-[104px] lg:text-[128px] xl:text-[152px]">
           {heading}
         </h2>
       </FadeIn>
@@ -72,8 +72,8 @@ export default function AboutPage() {
         <div className="rule" />
       </div>
 
-      {/* 02 — WHO'S / MR. / ANANYA. */}
-      <EditorialSection heading={<Stacked lines={["WHO\u2019S", 'MR.', 'ANANYA.']} />}>
+      {/* 02 — WHO'S MR. ANANYA? */}
+      <EditorialSection heading={<Stacked lines={["WHO\u2019S", 'MR.', 'ANANYA?']} />}>
         <div className="eyebrow mb-6">02 — The Founder</div>
         <p>At 19, Ananya is driven by one obsession: understanding how businesses are built, why they succeed, why they fail, and how they can become better.</p>
         <p>After founding a few ventures that ultimately failed, he realized that failure isn&rsquo;t just an outcome—it&rsquo;s one of the best teachers. That belief became the foundation of FailureSays.</p>
@@ -89,8 +89,8 @@ export default function AboutPage() {
         <div className="rule" />
       </div>
 
-      {/* 03 — WHO / THIS / IS FOR. */}
-      <EditorialSection heading={<Stacked lines={['WHO', 'THIS', 'IS FOR.']} />}>
+      {/* 03 — WHO THIS IS FOR? */}
+      <EditorialSection heading={<Stacked lines={['WHO', 'THIS', 'IS FOR?']} />}>
         <div className="eyebrow mb-6">03 — The Reader</div>
         <p>FailureSays is built for anyone curious about business, but it speaks most to those standing at the beginning.</p>
         <p>For students, aspiring founders, and young entrepreneurs trying to go from 0 to 1—the hardest step in entrepreneurship.</p>
