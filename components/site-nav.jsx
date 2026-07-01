@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Menu, X, ChevronDown } from 'lucide-react'
+import { Search, Menu, X } from 'lucide-react'
 import { LogoLockup } from '@/components/logo'
 import { CATEGORIES } from '@/lib/brand'
 import { useRouter } from 'next/navigation'
@@ -54,9 +54,7 @@ export default function SiteNav() {
           <nav className="hidden md:flex items-center gap-9 text-[13px] uppercase tracking-[0.2em]">
             <Link href="/" className="link-underline">Home</Link>
             <div className="relative" onMouseEnter={() => setWisdomOpen(true)} onMouseLeave={() => setWisdomOpen(false)}>
-              <button className="flex items-center gap-1 link-underline" onClick={() => setWisdomOpen(v => !v)}>
-                Wisdom <ChevronDown className="w-3 h-3" />
-              </button>
+              <Link href="/wisdom" className="link-underline">Wisdom</Link>
               <AnimatePresence>
                 {wisdomOpen && (
                   <motion.div

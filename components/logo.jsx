@@ -4,8 +4,8 @@ import { LOGO_MARK } from '@/lib/brand'
 
 export function LogoMark({ size = 32, className = '', invert = false }) {
   return (
-    <span className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-      <Image src={LOGO_MARK} alt="FailureSays" width={size} height={size} className={invert ? 'invert' : ''} priority />
+    <span className={`inline-flex items-center justify-center overflow-hidden ${className}`} style={{ width: size, height: size, filter: invert ? 'invert(1)' : 'none' }}>
+      <Image src={LOGO_MARK} alt="FailureSays" width={size} height={size} className="object-contain" priority />
     </span>
   )
 }

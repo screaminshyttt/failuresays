@@ -95,9 +95,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* LATEST ARTICLES */}
+      {/* LATEST ARTICLES - first one dark, rest normal */}
       <SectionShell eyebrow="06 — Fresh" title="Latest Articles" href="/blog" description="The most recent pieces across every category.">
-        <CardGrid articles={all.slice(0, 6)} loading={loading} cols={3} />
+        <LatestGrid articles={all.slice(0, 6)} loading={loading} />
       </SectionShell>
 
       {/* CATEGORIES CTA */}
@@ -165,6 +165,18 @@ function CardGrid({ articles, loading, cols = 3 }) {
   return (
     <div className={`grid ${gridCls} gap-6`}>
       {articles.slice(0, 6).map(a => <ArticleCard key={a.id} article={a} />)}
+    </div>
+  )
+}
+
+function LatestGrid({ articles, loading }) {
+  if (loading) return <div className="grid md:grid-cols-3 gap-6"><Skeletons count={3} /></div>
+  if (!articles.length) return <EmptyState />
+  const [first, ...rest] = articles
+  return (
+    <div className="grid md:grid-cols-3 gap-6">
+      <div className="md:col-span-1"><ArticleCard article={first} dark /></div>
+      {rest.slice(0, 5).map(a => <ArticleCard key={a.id} article={a} />)}
     </div>
   )
 }
