@@ -48,9 +48,9 @@ export default function SiteNav() {
         <div className="container-editorial flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3" aria-label="FailureSays home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={NAV_MARK} alt="" style={{ height: scrolled ? 40 : 52, width: 'auto', display: 'block' }} />
+            <img src={NAV_MARK} alt="" style={{ height: scrolled ? 36 : 46, width: scrolled ? 36 : 46, objectFit: 'cover', display: 'block' }} />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={NAV_WORDMARK} alt="FailureSays" style={{ height: scrolled ? 30 : 40, width: 'auto', display: 'block' }} />
+            <img src={NAV_WORDMARK} alt="FailureSays" style={{ height: scrolled ? 28 : 36, width: 'auto', display: 'block' }} />
           </Link>
 
           <nav className="hidden md:flex items-center gap-9 text-[13px] uppercase tracking-[0.2em]">
