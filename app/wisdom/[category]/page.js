@@ -36,7 +36,7 @@ export default function CategoryPage() {
   return (
     <div className="bg-paper">
       {/* HERO */}
-      <section className="container-editorial-wide pt-6 md:pt-10 pb-10 md:pb-14">
+      <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14">
         <Link href="/wisdom" className="text-xs uppercase tracking-[0.24em] text-muted link-underline">← Wisdom</Link>
         <div className="eyebrow mt-8">{String(index).padStart(2, '0')} — Series</div>
         <h1 className="page-heading-wrap mt-4">{cat.label.toUpperCase()}.</h1>

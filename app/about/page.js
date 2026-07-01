@@ -18,7 +18,7 @@ const FadeIn = ({ children, delay = 0 }) => (
  */
 function EditorialSection({ heading, children, first = false }) {
   return (
-    <section className={`container-editorial-wide ${first ? 'pt-6 md:pt-10' : 'pt-28 md:pt-40'} pb-16 md:pb-28`}>
+    <section className={`container-editorial-wide ${first ? 'pt-4 md:pt-6' : 'pt-28 md:pt-40'} pb-16 md:pb-28`}>
       {/* HEADING — single line, fluid sizing so it always fits without wrapping */}
       <FadeIn>
         <h2 className="page-heading">{heading}</h2>

@@ -49,7 +49,7 @@ export default function ArticlePage() {
   return (
     <article className="bg-paper">
       {/* HEADER */}
-      <div className="container-editorial-wide pt-6 md:pt-10 pb-12">
+      <div className="container-editorial-wide pt-4 md:pt-6 pb-12">
         <Link href={`/wisdom/${cat.slug}`} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-muted link-underline">
           <ArrowLeft className="w-3 h-3" /> {cat.label}
         </Link>

@@ -28,7 +28,7 @@ export default function ContactPage() {
   return (
     <div className="bg-paper">
       {/* HERO */}
-      <section className="container-editorial-wide pt-6 md:pt-10 pb-10 md:pb-14">
+      <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14">
         <div className="eyebrow">Say Hello</div>
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="page-heading mt-4">
           CONTACT.
