@@ -54,50 +54,36 @@ export default function Home() {
         <MarqueeBanner />
       </section>
 
+      {/* LATEST ARTICLES - first one dark card, rest normal */}
+      <SectionShell eyebrow="01 — Fresh" title="Latest Articles" href="/blog" description="The most recent pieces across every category.">
+        <LatestGrid articles={all.slice(0, 6)} loading={loading} />
+      </SectionShell>
+
       {/* STARTUP ANALYSES - horizontal scroll */}
-      <SectionShell eyebrow="01 — Series" title="Startup Analyses" href="/wisdom/startup-analyses" description="Deep dives into how great companies actually work, told without the myth-making.">
+      <SectionShell eyebrow="02 — Series" title="Startup Analyses" href="/wisdom/startup-analyses" description="Deep dives into how great companies actually work, told without the myth-making." tone="cream">
         <HorizontalScroll articles={by('startup-analyses')} loading={loading} />
       </SectionShell>
 
       {/* COMPANY IMPROVEMENT IDEAS */}
-      <SectionShell eyebrow="02 — Ideas" title="Company Improvement Ideas" href="/wisdom/company-improvement-ideas" description="Opinionated, practical directions to make good companies great." tone="cream">
+      <SectionShell eyebrow="03 — Ideas" title="Company Improvement Ideas" href="/wisdom/company-improvement-ideas" description="Opinionated, practical directions to make good companies great.">
         <CardGrid articles={by('company-improvement-ideas')} loading={loading} cols={3} />
       </SectionShell>
 
       {/* CASE STUDIES - large editorial */}
-      <SectionShell eyebrow="03 — Long form" title="Case Studies" href="/wisdom/case-studies" description="Investigations of pivotal moments — rises, falls, comebacks, betrayals.">
+      <SectionShell eyebrow="04 — Long form" title="Case Studies" href="/wisdom/case-studies" description="Investigations of pivotal moments — rises, falls, comebacks, betrayals." tone="cream">
         <div className="grid md:grid-cols-2 gap-8">
           {loading ? <Skeletons count={2} large /> : (by('case-studies').length === 0 ? <div className="md:col-span-2"><EmptyState /></div> : by('case-studies').slice(0, 4).map(a => <ArticleCard key={a.id} article={a} variant="large" />))}
         </div>
       </SectionShell>
 
       {/* STARTUP IDEAS */}
-      <SectionShell eyebrow="04 — Sketches" title="Startup Ideas" href="/wisdom/startup-ideas" description="Overlooked problems worth building a company around." tone="cream">
+      <SectionShell eyebrow="05 — Sketches" title="Startup Ideas" href="/wisdom/startup-ideas" description="Overlooked problems worth building a company around.">
         <CardGrid articles={by('startup-ideas')} loading={loading} cols={3} />
       </SectionShell>
 
-      {/* FAILURES & LESSONS - dark section */}
-      <section className="bg-black text-paper mt-24">
-        <div className="container-editorial py-24">
-          <FadeUp>
-            <div className="flex items-end justify-between gap-6 flex-wrap">
-              <div>
-                <div className="eyebrow text-paper/60">05 — Autopsies</div>
-                <h2 className="display mt-4 text-6xl md:text-8xl">Failures &amp; Lessons</h2>
-                <p className="mt-6 max-w-xl text-paper/70 text-lg">What died, why it died, and what it taught us. The best classroom is the graveyard.</p>
-              </div>
-              <Link href="/wisdom/failures-lessons" className="text-xs uppercase tracking-[0.24em] text-paper/80 hover:text-white link-underline">All lessons →</Link>
-            </div>
-          </FadeUp>
-          <div className="mt-14 grid md:grid-cols-3 gap-6">
-            {loading ? <Skeletons count={3} dark /> : (by('failures-lessons').length === 0 ? <div className="md:col-span-3"><div className="border border-dashed border-white/20 py-24 text-center text-paper/60"><div className="eyebrow text-paper/60">Coming soon</div><div className="mt-3">No lessons published yet.</div></div></div> : by('failures-lessons').slice(0, 6).map(a => <ArticleCard key={a.id} article={a} dark />))}
-          </div>
-        </div>
-      </section>
-
-      {/* LATEST ARTICLES - first one dark, rest normal */}
-      <SectionShell eyebrow="06 — Fresh" title="Latest Articles" href="/blog" description="The most recent pieces across every category.">
-        <LatestGrid articles={all.slice(0, 6)} loading={loading} />
+      {/* FAILURES & LESSONS - same warm palette as other sections */}
+      <SectionShell eyebrow="06 — Autopsies" title="Failures & Lessons" href="/wisdom/failures-lessons" description="What died, why it died, and what it taught us. The best classroom is the graveyard." tone="cream">
+        <CardGrid articles={by('failures-lessons')} loading={loading} cols={3} />
       </SectionShell>
 
       {/* CATEGORIES CTA */}
