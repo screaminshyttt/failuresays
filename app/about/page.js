@@ -19,9 +19,9 @@ const FadeIn = ({ children, delay = 0 }) => (
 function EditorialSection({ heading, children, first = false }) {
   return (
     <section className={`container-editorial ${first ? 'pt-16 md:pt-24' : 'pt-28 md:pt-40'} pb-16 md:pb-28`}>
-      {/* HEADING — left-aligned, sized for editorial balance (not overwhelming) */}
+      {/* HEADING — single line, fluid sizing so it always fits without wrapping */}
       <FadeIn>
-        <h2 className="display uppercase leading-[0.9] tracking-[-0.005em] text-ink text-[64px] sm:text-[84px] md:text-[104px] lg:text-[128px] xl:text-[152px]">
+        <h2 className="display uppercase leading-[0.95] tracking-[-0.005em] text-ink whitespace-nowrap text-[clamp(2.25rem,9vw,9rem)]">
           {heading}
         </h2>
       </FadeIn>
@@ -51,7 +51,7 @@ export default function AboutPage() {
   return (
     <div className="bg-paper">
       {/* 01 — ABOUT. */}
-      <EditorialSection heading={<Stacked lines={['ABOUT.']} />} first>
+      <EditorialSection heading="ABOUT." first>
         <div className="eyebrow mb-6">01 — The Publication</div>
         <p>Every successful company has a story.</p>
         <p>Most people stop at the ending.</p>
@@ -73,7 +73,7 @@ export default function AboutPage() {
       </div>
 
       {/* 02 — WHO'S MR. ANANYA? */}
-      <EditorialSection heading={<Stacked lines={["WHO\u2019S", 'MR.', 'ANANYA?']} />}>
+      <EditorialSection heading={"WHO\u2019S MR. ANANYA?"}>
         <div className="eyebrow mb-6">02 — The Founder</div>
         <p>At 19, Ananya is driven by one obsession: understanding how businesses are built, why they succeed, why they fail, and how they can become better.</p>
         <p>After founding a few ventures that ultimately failed, he realized that failure isn&rsquo;t just an outcome—it&rsquo;s one of the best teachers. That belief became the foundation of FailureSays.</p>
@@ -90,7 +90,7 @@ export default function AboutPage() {
       </div>
 
       {/* 03 — WHO THIS IS FOR? */}
-      <EditorialSection heading={<Stacked lines={['WHO', 'THIS', 'IS FOR?']} />}>
+      <EditorialSection heading="WHO THIS IS FOR?">
         <div className="eyebrow mb-6">03 — The Reader</div>
         <p>FailureSays is built for anyone curious about business, but it speaks most to those standing at the beginning.</p>
         <p>For students, aspiring founders, and young entrepreneurs trying to go from 0 to 1—the hardest step in entrepreneurship.</p>
