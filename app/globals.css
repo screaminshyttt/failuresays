@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    background: #F1EFE7;
+    color: #000000;
+    font-family: var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'ss01','cv11';
+  }
+  ::selection { background: #000; color: #F1EFE7; }
+  h1,h2,h3,h4 { letter-spacing: -0.01em; }
+}
+
+@layer components {
+  .container-editorial { @apply mx-auto w-full max-w-[1400px] px-6 md:px-10; }
+  .display { font-family: var(--font-bebas), Anton, Impact, sans-serif; letter-spacing: 0.005em; line-height: 0.92; }
+  .eyebrow { @apply text-[11px] uppercase tracking-[0.24em] text-muted; }
+  .rule { @apply border-t border-[#DDD9CF]; }
+  .btn-primary { @apply inline-flex items-center gap-2 bg-black text-[#F1EFE7] px-6 py-3 text-sm uppercase tracking-[0.18em] transition-colors hover:bg-[#1A1A1A]; }
+  .btn-ghost { @apply inline-flex items-center gap-2 border border-black text-black px-6 py-3 text-sm uppercase tracking-[0.18em] transition-colors hover:bg-black hover:text-[#F1EFE7]; }
+  .link-underline { @apply relative inline-block; }
+  .link-underline::after { content: ''; @apply absolute left-0 -bottom-0.5 h-px w-full bg-current origin-right scale-x-0 transition-transform duration-500; }
+  .link-underline:hover::after { @apply origin-left scale-x-100; }
+  .card-editorial { @apply bg-white border border-[#DDD9CF] transition-all duration-500; }
+  .card-editorial:hover { @apply -translate-y-1 shadow-[0_20px_40px_-20px_rgba(0,0,0,0.15)]; }
+  .noise::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(#000 0.5px, transparent 0.5px); background-size: 3px 3px; opacity: 0.03; pointer-events: none; }
+  .prose-editorial { @apply text-[17px] leading-[1.85] text-black; }
+  .prose-editorial h1 { @apply display text-5xl md:text-7xl mt-12 mb-6; }
+  .prose-editorial h2 { @apply display text-4xl md:text-5xl mt-14 mb-5; }
+  .prose-editorial h3 { @apply text-2xl font-semibold mt-10 mb-4; }
+  .prose-editorial p { @apply my-5; }
+  .prose-editorial a { @apply underline decoration-1 underline-offset-4 hover:text-muted; }
+  .prose-editorial blockquote { @apply border-l-2 border-black pl-6 my-8 italic text-xl text-muted; }
+  .prose-editorial ul { @apply list-disc pl-6 my-5 space-y-2; }
+  .prose-editorial ol { @apply list-decimal pl-6 my-5 space-y-2; }
+  .prose-editorial code { @apply bg-[#F7F5EF] px-1.5 py-0.5 text-sm border border-[#DDD9CF]; }
+  .prose-editorial pre { @apply bg-black text-[#F1EFE7] p-5 overflow-x-auto text-sm my-6; }
+  .prose-editorial pre code { @apply bg-transparent border-0 text-[#F1EFE7]; }
+  .prose-editorial img { @apply my-8 w-full; }
+  .prose-editorial hr { @apply my-10 border-t border-[#DDD9CF]; }
+}
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
