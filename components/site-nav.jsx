@@ -25,9 +25,9 @@ export default function SiteNav() {
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className={`sticky top-0 z-50 bg-black text-paper transition-all duration-500 ${scrolled ? 'py-1.5' : 'py-2.5'}`}
     >
-      <div className="container-editorial flex items-center justify-between">
+      <div className="container-editorial relative flex items-center justify-between">
         {/* Logos - left */}
-        <Link href="/" className="flex items-center gap-3" aria-label="FailureSays home">
+        <Link href="/" className="flex items-center gap-3 relative z-10" aria-label="FailureSays home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={NAV_MARK}
@@ -42,8 +42,8 @@ export default function SiteNav() {
           />
         </Link>
 
-        {/* Menu - center */}
-        <nav className="hidden md:flex items-center gap-9 text-[13px] uppercase tracking-[0.2em]">
+        {/* Menu - absolutely centered with respect to the WHOLE bar */}
+        <nav className="hidden md:flex items-center gap-9 text-[13px] uppercase tracking-[0.2em] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <Link href="/" className="link-underline">Home</Link>
           <div
             className="relative"
@@ -86,8 +86,8 @@ export default function SiteNav() {
           <Link href="/contact" className="link-underline">Contact</Link>
         </nav>
 
-        {/* Right side - just mobile menu button */}
-        <div className="flex items-center">
+        {/* Right side - just mobile menu button (empty on desktop) */}
+        <div className="flex items-center relative z-10">
           <button
             aria-label="Menu"
             className="md:hidden p-2"
@@ -95,8 +95,6 @@ export default function SiteNav() {
           >
             {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-          {/* Spacer so desktop layout remains balanced with the logo lockup on the left */}
-          <div className="hidden md:block w-[46px]" aria-hidden />
         </div>
       </div>
 
