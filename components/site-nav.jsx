@@ -47,9 +47,9 @@ export default function SiteNav() {
         className={`sticky top-0 z-50 bg-black text-paper transition-all duration-500 ${scrolled ? 'py-2' : 'py-4'}`}
       >
         <div className="container-editorial flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-4" aria-label="FailureSays home">
-            <LogoMark invert size={scrolled ? 44 : 56} />
-            <LogoWordmark invert height={scrolled ? 36 : 48} />
+          <Link href="/" className="flex items-center gap-4 md:gap-5" aria-label="FailureSays home">
+            <LogoMark invert size={scrolled ? 60 : 84} />
+            <LogoWordmark invert height={scrolled ? 44 : 60} />
           </Link>
 
           <nav className="hidden md:flex items-center gap-9 text-[13px] uppercase tracking-[0.2em]">

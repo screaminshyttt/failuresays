@@ -54,8 +54,8 @@ export default function Home() {
         <MarqueeBanner />
       </section>
 
-      {/* LATEST ARTICLES - first one dark card, rest normal */}
-      <SectionShell eyebrow="01 — Fresh" title="Latest Articles" href="/blog" description="The most recent pieces across every category.">
+      {/* LATEST ARTICLES - first one dark card, rest normal. Uses distinct 'stone' tone. */}
+      <SectionShell eyebrow="01 — Fresh" title="Latest Articles" href="/blog" description="The most recent pieces across every category." tone="stone">
         <LatestGrid articles={all.slice(0, 6)} loading={loading} />
       </SectionShell>
 
@@ -65,7 +65,7 @@ export default function Home() {
       </SectionShell>
 
       {/* COMPANY IMPROVEMENT IDEAS */}
-      <SectionShell eyebrow="03 — Ideas" title="Company Improvement Ideas" href="/wisdom/company-improvement-ideas" description="Opinionated, practical directions to make good companies great.">
+      <SectionShell eyebrow="03 — Ideas" title="Company Improvement Ideas" href="/wisdom/company-improvement-ideas" description="Opinionated, practical directions to make good companies great." tone="cream">
         <CardGrid articles={by('company-improvement-ideas')} loading={loading} cols={3} />
       </SectionShell>
 
@@ -77,7 +77,7 @@ export default function Home() {
       </SectionShell>
 
       {/* STARTUP IDEAS */}
-      <SectionShell eyebrow="05 — Sketches" title="Startup Ideas" href="/wisdom/startup-ideas" description="Overlooked problems worth building a company around.">
+      <SectionShell eyebrow="05 — Sketches" title="Startup Ideas" href="/wisdom/startup-ideas" description="Overlooked problems worth building a company around." tone="cream">
         <CardGrid articles={by('startup-ideas')} loading={loading} cols={3} />
       </SectionShell>
 
@@ -111,8 +111,9 @@ export default function Home() {
 }
 
 function SectionShell({ eyebrow, title, href, description, children, tone = 'paper' }) {
+  const bg = tone === 'cream' ? 'bg-cream' : tone === 'stone' ? 'bg-[#EDE9DC]' : 'bg-paper'
   return (
-    <section className={`${tone === 'cream' ? 'bg-cream' : 'bg-paper'} py-24`}>
+    <section className={`${bg} py-24`}>
       <div className="container-editorial">
         <FadeUp>
           <div className="flex items-end justify-between gap-6 flex-wrap">
