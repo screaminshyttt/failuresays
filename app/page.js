@@ -60,29 +60,29 @@ export default function Home() {
       </SectionShell>
 
       {/* STARTUP ANALYSES - horizontal scroll */}
-      <SectionShell eyebrow="02 — Series" title="Startup Analyses" href="/wisdom/startup-analyses" description="Deep dives into how great companies actually work, told without the myth-making." tone="cream">
+      <SectionShell eyebrow="02 — Series" title="Startup Analyses" href="/wisdom/startup-analyses" description="Deep dives into how great companies actually work, told without the myth-making." tone="grey">
         <HorizontalScroll articles={by('startup-analyses')} loading={loading} />
       </SectionShell>
 
       {/* COMPANY IMPROVEMENT IDEAS */}
-      <SectionShell eyebrow="03 — Ideas" title="Company Improvement Ideas" href="/wisdom/company-improvement-ideas" description="Opinionated, practical directions to make good companies great." tone="cream">
+      <SectionShell eyebrow="03 — Ideas" title="Company Improvement Ideas" href="/wisdom/company-improvement-ideas" description="Opinionated, practical directions to make good companies great." tone="grey">
         <CardGrid articles={by('company-improvement-ideas')} loading={loading} cols={3} />
       </SectionShell>
 
       {/* CASE STUDIES - large editorial */}
-      <SectionShell eyebrow="04 — Long form" title="Case Studies" href="/wisdom/case-studies" description="Investigations of pivotal moments — rises, falls, comebacks, betrayals." tone="cream">
+      <SectionShell eyebrow="04 — Long form" title="Case Studies" href="/wisdom/case-studies" description="Investigations of pivotal moments — rises, falls, comebacks, betrayals." tone="grey">
         <div className="grid md:grid-cols-2 gap-8">
           {loading ? <Skeletons count={2} large /> : (by('case-studies').length === 0 ? <div className="md:col-span-2"><EmptyState /></div> : by('case-studies').slice(0, 4).map(a => <ArticleCard key={a.id} article={a} variant="large" />))}
         </div>
       </SectionShell>
 
       {/* STARTUP IDEAS */}
-      <SectionShell eyebrow="05 — Sketches" title="Startup Ideas" href="/wisdom/startup-ideas" description="Overlooked problems worth building a company around." tone="cream">
+      <SectionShell eyebrow="05 — Sketches" title="Startup Ideas" href="/wisdom/startup-ideas" description="Overlooked problems worth building a company around." tone="grey">
         <CardGrid articles={by('startup-ideas')} loading={loading} cols={3} />
       </SectionShell>
 
       {/* FAILURES & LESSONS - same warm palette as other sections */}
-      <SectionShell eyebrow="06 — Autopsies" title="Failures & Lessons" href="/wisdom/failures-lessons" description="What died, why it died, and what it taught us. The best classroom is the graveyard." tone="cream">
+      <SectionShell eyebrow="06 — Autopsies" title="Failures & Lessons" href="/wisdom/failures-lessons" description="What died, why it died, and what it taught us. The best classroom is the graveyard." tone="grey">
         <CardGrid articles={by('failures-lessons')} loading={loading} cols={3} />
       </SectionShell>
 
@@ -111,7 +111,11 @@ export default function Home() {
 }
 
 function SectionShell({ eyebrow, title, href, description, children, tone = 'paper' }) {
-  const bg = tone === 'cream' ? 'bg-cream' : tone === 'stone' ? 'bg-[#EDE9DC]' : 'bg-paper'
+  const bg =
+    tone === 'cream' ? 'bg-cream' :
+    tone === 'stone' ? 'bg-[#EDE9DC]' :
+    tone === 'grey' ? 'bg-[#E4E1D5]' :
+    'bg-paper'
   return (
     <section className={`${bg} py-24`}>
       <div className="container-editorial">
