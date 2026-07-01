@@ -13,34 +13,25 @@ const FadeIn = ({ children, delay = 0 }) => (
 )
 
 /**
- * Editorial section: massive heading pinned on the left, body content on the right.
- * Heading is `sticky` so it stays visible while the reader scrolls the body copy —
- * gives the piece that luxury-magazine feel.
+ * Editorial section: massive left-aligned heading with body copy flowing
+ * directly beneath it. Both anchored to the same left margin.
  */
 function EditorialSection({ heading, children, first = false }) {
   return (
-    <section className={`container-editorial ${first ? 'pt-16 md:pt-24' : 'pt-32 md:pt-48'} pb-16 md:pb-28`}>
-      <div className="grid grid-cols-1 md:grid-cols-12 md:gap-16 lg:gap-24">
-        {/* LEFT — oversized heading */}
-        <div className="md:col-span-5">
-          <div className="md:sticky md:top-28">
-            <FadeIn>
-              <h2 className="display uppercase leading-[0.86] tracking-[-0.01em] text-ink text-[88px] sm:text-[120px] md:text-[140px] lg:text-[180px] xl:text-[220px]">
-                {heading}
-              </h2>
-            </FadeIn>
-          </div>
-        </div>
+    <section className={`container-editorial ${first ? 'pt-16 md:pt-24' : 'pt-28 md:pt-40'} pb-16 md:pb-28`}>
+      {/* HEADING — massive, left-aligned */}
+      <FadeIn>
+        <h2 className="display uppercase leading-[0.86] tracking-[-0.01em] text-ink text-[88px] sm:text-[120px] md:text-[160px] lg:text-[200px] xl:text-[240px]">
+          {heading}
+        </h2>
+      </FadeIn>
 
-        {/* RIGHT — body copy */}
-        <div className="md:col-span-7 mt-10 md:mt-8">
-          <FadeIn delay={0.1}>
-            <div className="max-w-2xl space-y-6 text-[17px] md:text-[18px] leading-[1.85] text-ink">
-              {children}
-            </div>
-          </FadeIn>
+      {/* BODY — directly below, left-aligned, capped for readability */}
+      <FadeIn delay={0.08}>
+        <div className="mt-10 md:mt-14 max-w-[760px] space-y-6 text-[17px] md:text-[18px] leading-[1.85] text-ink">
+          {children}
         </div>
-      </div>
+      </FadeIn>
     </section>
   )
 }
