@@ -27,83 +27,84 @@ export default function ContactPage() {
     }
   }
 
+  // Single self-contained editorial page. Sized to fit within a standard
+  // desktop viewport (above the fold) with a consistent 32/48/64 rhythm.
   return (
     <div className="bg-paper">
-      {/* HERO */}
-      <section className="container-editorial-wide pt-4 md:pt-6 pb-6 md:pb-10">
+      <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14">
+        {/* HERO ------------------------------------------------------- */}
         <div className="eyebrow">Say Hello</div>
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="page-heading mt-4"
+          className="page-heading mt-3"
         >
           CONTACT.
         </motion.h1>
-        <p className="mt-8 max-w-3xl text-lg md:text-xl text-muted leading-relaxed">
+        <p className="mt-4 max-w-2xl text-base md:text-lg text-muted leading-relaxed">
           For ideas, essays, collaborations, or just a conversation about failure and what it teaches.
         </p>
-      </section>
 
-      {/* PRIMARY EMAIL — the whole page's centrepiece */}
-      <section className="container-editorial-wide pt-8 md:pt-16 pb-20 md:pb-28">
+        {/* EMAIL SECTION --------------------------------------------- */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.7 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.05 }}
+          className="mt-10 md:mt-12"
         >
           <div className="eyebrow">Write to</div>
 
-          {/* Email — set in the site's sans typography (lowercase, semibold), sized as a prominent statement */}
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="group mt-6 inline-flex items-center gap-4 flex-wrap"
+            className="group mt-3 inline-flex items-center gap-3 flex-wrap"
           >
             <span
-              className="font-semibold tracking-[-0.02em] leading-[1.05] text-ink lowercase group-hover:opacity-80 transition-opacity"
-              style={{ fontSize: 'clamp(1.75rem, 4.8vw, 4rem)' }}
+              className="font-semibold tracking-[-0.02em] leading-[1.05] text-ink lowercase group-hover:opacity-80 transition-opacity break-all"
+              style={{ fontSize: 'clamp(1.5rem, 4.2vw, 3.5rem)' }}
             >
               {CONTACT_EMAIL}
             </span>
-            <ArrowUpRight className="w-7 h-7 md:w-10 md:h-10 text-ink group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            <ArrowUpRight className="w-6 h-6 md:w-8 md:h-8 text-ink group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           </a>
 
-          {/* Copy action */}
-          <div className="mt-8">
+          <div className="mt-4">
             <button
               onClick={copyEmail}
-              className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.24em] border border-black px-5 py-3 hover:bg-black hover:text-paper transition-colors"
+              className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.24em] border border-black px-4 py-2.5 hover:bg-black hover:text-paper transition-colors"
             >
               {copied ? (<><Check className="w-3.5 h-3.5" /> Copied</>) : (<><Copy className="w-3.5 h-3.5" /> Copy email</>)}
             </button>
           </div>
         </motion.div>
 
-        {/* Meta strip — response time, hours, and elsewhere */}
-        <div className="mt-20 md:mt-28 grid gap-10 md:gap-14 md:grid-cols-3 border-t border-rule pt-14">
-          <MetaBlock title="Response time">
-            <p>I read every message. Replies typically within a week — sometimes sooner, occasionally longer if the reply deserves thought.</p>
-          </MetaBlock>
+        {/* INFO STRIP — perfectly balanced 3-col grid ---------------- */}
+        <div className="mt-12 md:mt-16 pt-8 border-t border-rule">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start">
+            <MetaBlock title="Response time">
+              I read every message. Replies typically within a week — sometimes sooner.
+            </MetaBlock>
 
-          <MetaBlock title="Best for">
-            <p>Essay ideas, thoughtful disagreement, startup analyses you want dissected, collaborations, and long-form conversations.</p>
-          </MetaBlock>
+            <MetaBlock title="Best for">
+              Essay ideas, thoughtful disagreement, startup analyses to dissect, collaborations.
+            </MetaBlock>
 
-          <MetaBlock title="Elsewhere">
-            <div className="flex flex-wrap gap-3 mt-1">
-              {SOCIALS.map(({ label, href, Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  aria-label={label}
-                  className="w-11 h-11 border border-rule bg-white flex items-center justify-center hover:bg-black hover:text-paper transition-colors"
-                >
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
-            </div>
-          </MetaBlock>
+            <MetaBlock title="Elsewhere">
+              <div className="flex flex-wrap gap-2 mt-0.5">
+                {SOCIALS.map(({ label, href, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    aria-label={label}
+                    className="w-10 h-10 border border-rule bg-white flex items-center justify-center hover:bg-black hover:text-paper transition-colors"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                ))}
+              </div>
+            </MetaBlock>
+          </div>
         </div>
       </section>
     </div>
@@ -114,7 +115,7 @@ function MetaBlock({ title, children }) {
   return (
     <div>
       <div className="eyebrow">{title}</div>
-      <div className="mt-4 text-[15px] md:text-base text-muted leading-relaxed">
+      <div className="mt-3 text-[14px] md:text-[15px] text-muted leading-[1.65]">
         {children}
       </div>
     </div>
