@@ -3,8 +3,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Menu, X } from 'lucide-react'
-import { LogoWordmark, LogoMark } from '@/components/logo'
-import { CATEGORIES } from '@/lib/brand'
+import { CATEGORIES, NAV_MARK, NAV_WORDMARK } from '@/lib/brand'
 import { useRouter } from 'next/navigation'
 
 const wisdomItems = CATEGORIES.filter(c => c.slug !== 'blog')
@@ -44,12 +43,14 @@ export default function SiteNav() {
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22,1,0.36,1] }}
-        className={`sticky top-0 z-50 bg-black text-paper transition-all duration-500 ${scrolled ? 'py-2' : 'py-4'}`}
+        className={`sticky top-0 z-50 bg-black text-paper transition-all duration-500 ${scrolled ? 'py-1.5' : 'py-2.5'}`}
       >
         <div className="container-editorial flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-4 md:gap-5" aria-label="FailureSays home">
-            <LogoMark invert size={scrolled ? 60 : 84} />
-            <LogoWordmark invert height={scrolled ? 44 : 60} />
+          <Link href="/" className="flex items-center gap-3" aria-label="FailureSays home">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={NAV_MARK} alt="" style={{ height: scrolled ? 40 : 52, width: 'auto', display: 'block' }} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={NAV_WORDMARK} alt="FailureSays" style={{ height: scrolled ? 30 : 40, width: 'auto', display: 'block' }} />
           </Link>
 
           <nav className="hidden md:flex items-center gap-9 text-[13px] uppercase tracking-[0.2em]">
