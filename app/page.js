@@ -30,7 +30,7 @@ export default function Home() {
     <div className="bg-paper">
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <div className="container-editorial pt-16 md:pt-24 pb-24 md:pb-32">
+        <div className="container-editorial pt-4 md:pt-6 pb-24 md:pb-32">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
