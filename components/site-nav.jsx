@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Menu, X } from 'lucide-react'
-import { LogoWordmark } from '@/components/logo'
+import { LogoWordmark, LogoMark } from '@/components/logo'
 import { CATEGORIES } from '@/lib/brand'
 import { useRouter } from 'next/navigation'
 
@@ -49,6 +49,7 @@ export default function SiteNav() {
         <div className="container-editorial flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3" aria-label="FailureSays home">
             <LogoWordmark invert height={scrolled ? 22 : 30} />
+            <LogoMark invert size={scrolled ? 24 : 32} />
           </Link>
 
           <nav className="hidden md:flex items-center gap-9 text-[13px] uppercase tracking-[0.2em]">
