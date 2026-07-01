@@ -25,7 +25,7 @@ export default function ArticlePage() {
 
   if (loading) {
     return (
-      <div className="container-editorial pt-20 pb-40">
+      <div className="container-editorial-wide pt-10 pb-40">
         <div className="h-6 w-40 bg-white border border-rule animate-pulse" />
         <div className="mt-8 h-24 w-full max-w-3xl bg-white border border-rule animate-pulse" />
         <div className="mt-4 h-6 w-64 bg-white border border-rule animate-pulse" />
@@ -35,7 +35,7 @@ export default function ArticlePage() {
 
   if (notFound || !article) {
     return (
-      <div className="container-editorial py-40 text-center">
+      <div className="container-editorial-wide py-40 text-center">
         <div className="eyebrow">404</div>
         <h1 className="display text-6xl mt-4">Essay not found</h1>
         <Link href="/blog" className="btn-ghost mt-8">Back to Blog</Link>
@@ -48,14 +48,24 @@ export default function ArticlePage() {
 
   return (
     <article className="bg-paper">
-      <div className="container-editorial pt-16 pb-24 max-w-4xl">
+      {/* HEADER */}
+      <div className="container-editorial-wide pt-6 md:pt-10 pb-12">
         <Link href={`/wisdom/${cat.slug}`} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-muted link-underline">
           <ArrowLeft className="w-3 h-3" /> {cat.label}
         </Link>
-        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="display mt-8 text-5xl md:text-7xl leading-[0.95]">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="page-heading-wrap mt-6"
+        >
           {article.title}
         </motion.h1>
-        {article.excerpt && <p className="mt-6 text-xl text-muted max-w-3xl leading-relaxed">{article.excerpt}</p>}
+        {article.excerpt && (
+          <p className="mt-8 max-w-4xl text-xl md:text-2xl text-muted leading-relaxed">
+            {article.excerpt}
+          </p>
+        )}
         <div className="mt-10 flex flex-wrap items-center gap-4 text-xs uppercase tracking-[0.22em] text-subtle">
           {dateStr && <span>{dateStr}</span>}
           <span className="w-1 h-1 rounded-full bg-subtle" />
@@ -68,7 +78,7 @@ export default function ArticlePage() {
       </div>
 
       {article.coverImage && (
-        <div className="container-editorial max-w-6xl">
+        <div className="container-editorial-wide">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9 }} className="aspect-[16/9] overflow-hidden bg-cream">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={article.coverImage} alt={article.title} className="w-full h-full object-cover" />
@@ -76,8 +86,9 @@ export default function ArticlePage() {
         </div>
       )}
 
-      <div className="container-editorial max-w-3xl py-16">
-        <div className="prose-editorial">
+      {/* BODY */}
+      <div className="container-editorial-wide py-16">
+        <div className="prose-editorial w-full max-w-none text-[18px] md:text-[19px]">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{article.content || ''}</ReactMarkdown>
         </div>
 

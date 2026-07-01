@@ -29,14 +29,17 @@ export default function WisdomPage() {
 
   return (
     <div className="bg-paper">
-      <section className="container-editorial pt-20 pb-14">
+      {/* HERO */}
+      <section className="container-editorial-wide pt-6 md:pt-10 pb-10 md:pb-14">
         <div className="eyebrow">Knowledge Hub</div>
-        <h1 className="display mt-4 text-6xl md:text-[128px] leading-[0.9]">Wisdom.</h1>
-        <p className="mt-6 max-w-2xl text-lg text-muted">Everything worth knowing, organized. Startup analyses, company improvement ideas, case studies, startup ideas, and failures & lessons — all in one place.</p>
+        <h1 className="page-heading mt-4">WISDOM.</h1>
+        <p className="mt-8 max-w-3xl text-lg md:text-xl text-muted leading-relaxed">
+          Everything worth knowing, organized. Startup analyses, company improvement ideas, case studies, startup ideas, and failures &amp; lessons — all in one place.
+        </p>
       </section>
 
       {/* Category tiles */}
-      <section className="container-editorial pb-12">
+      <section className="container-editorial-wide pb-12">
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {CATEGORIES.filter(c => c.slug !== 'blog').map((c, i) => (
             <motion.div key={c.slug} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }}>
@@ -52,7 +55,7 @@ export default function WisdomPage() {
       </section>
 
       {/* Search + filters */}
-      <section className="container-editorial py-10 border-t border-rule">
+      <section className="container-editorial-wide py-10 border-t border-rule">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="flex items-center gap-3 border border-rule bg-white px-4 py-3 w-full md:max-w-md">
             <Search className="w-4 h-4 text-muted" />
@@ -67,7 +70,7 @@ export default function WisdomPage() {
         </div>
       </section>
 
-      <section className="container-editorial py-16">
+      <section className="container-editorial-wide py-16">
         {loading ? <div className="grid md:grid-cols-3 gap-6">{Array.from({length:6}).map((_,i)=><div key={i} className="h-[440px] bg-white border border-rule animate-pulse" />)}</div> : filtered.length === 0 ? <EmptyState label="No pieces match your filter." /> : (
           <div className="grid md:grid-cols-3 gap-6">
             {filtered.map(a => <ArticleCard key={a.id} article={a} />)}
