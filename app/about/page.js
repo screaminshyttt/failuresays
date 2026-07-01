@@ -18,7 +18,7 @@ const FadeIn = ({ children, delay = 0 }) => (
  */
 function EditorialSection({ heading, children, first = false }) {
   return (
-    <section className={`container-editorial ${first ? 'pt-16 md:pt-24' : 'pt-28 md:pt-40'} pb-16 md:pb-28`}>
+    <section className={`w-full mx-auto max-w-[1600px] px-6 md:px-16 lg:px-24 xl:px-28 ${first ? 'pt-16 md:pt-24' : 'pt-28 md:pt-40'} pb-16 md:pb-28`}>
       {/* HEADING — single line, fluid sizing so it always fits without wrapping */}
       <FadeIn>
         <h2 className="display uppercase leading-[0.95] tracking-[-0.005em] text-ink whitespace-nowrap text-[clamp(2.25rem,9vw,9rem)]">
@@ -26,9 +26,9 @@ function EditorialSection({ heading, children, first = false }) {
         </h2>
       </FadeIn>
 
-      {/* BODY — directly below, left-aligned, wider editorial column */}
+      {/* BODY — spans the full editorial container for a premium long-form feel */}
       <FadeIn delay={0.08}>
-        <div className="mt-10 md:mt-14 max-w-[1180px] w-full space-y-6 text-[18px] md:text-[19px] leading-[1.85] text-ink">
+        <div className="mt-10 md:mt-14 w-full space-y-6 text-[18px] md:text-[19px] leading-[1.85] text-ink">
           {children}
         </div>
       </FadeIn>
@@ -68,7 +68,7 @@ export default function AboutPage() {
       </EditorialSection>
 
       {/* Divider */}
-      <div className="container-editorial">
+      <div className="w-full mx-auto max-w-[1600px] px-6 md:px-16 lg:px-24 xl:px-28">
         <div className="rule" />
       </div>
 
@@ -85,7 +85,7 @@ export default function AboutPage() {
       </EditorialSection>
 
       {/* Divider */}
-      <div className="container-editorial">
+      <div className="w-full mx-auto max-w-[1600px] px-6 md:px-16 lg:px-24 xl:px-28">
         <div className="rule" />
       </div>
 
