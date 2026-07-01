@@ -55,18 +55,18 @@ export default function ContactPage() {
         >
           <div className="eyebrow">Write to</div>
 
-          {/* Email as a giant editorial statement */}
+          {/* Email — set in the site's sans typography (lowercase, semibold), sized as a prominent statement */}
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="group mt-6 inline-flex items-baseline gap-4 flex-wrap"
+            className="group mt-6 inline-flex items-center gap-4 flex-wrap"
           >
             <span
-              className="display uppercase tracking-[-0.005em] leading-[0.95] text-ink group-hover:opacity-80 transition-opacity"
-              style={{ fontSize: 'clamp(1.9rem, 6.4vw, 6rem)' }}
+              className="font-semibold tracking-[-0.02em] leading-[1.05] text-ink lowercase group-hover:opacity-80 transition-opacity"
+              style={{ fontSize: 'clamp(1.75rem, 4.8vw, 4rem)' }}
             >
               {CONTACT_EMAIL}
             </span>
-            <ArrowUpRight className="w-8 h-8 md:w-12 md:h-12 text-ink group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            <ArrowUpRight className="w-7 h-7 md:w-10 md:h-10 text-ink group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           </a>
 
           {/* Copy action */}
