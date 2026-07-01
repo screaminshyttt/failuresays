@@ -26,9 +26,9 @@ function EditorialSection({ heading, children, first = false }) {
         </h2>
       </FadeIn>
 
-      {/* BODY — directly below, left-aligned, capped for readability */}
+      {/* BODY — directly below, left-aligned, wider editorial column */}
       <FadeIn delay={0.08}>
-        <div className="mt-10 md:mt-14 max-w-[760px] space-y-6 text-[17px] md:text-[18px] leading-[1.85] text-ink">
+        <div className="mt-10 md:mt-14 max-w-[1180px] w-full space-y-6 text-[18px] md:text-[19px] leading-[1.85] text-ink">
           {children}
         </div>
       </FadeIn>
