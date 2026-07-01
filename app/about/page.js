@@ -18,7 +18,7 @@ const FadeIn = ({ children, delay = 0 }) => (
  */
 function EditorialSection({ heading, children, first = false }) {
   return (
-    <section className={`w-full mx-auto max-w-[1600px] px-6 md:px-16 lg:px-24 xl:px-28 ${first ? 'pt-16 md:pt-24' : 'pt-28 md:pt-40'} pb-16 md:pb-28`}>
+    <section className={`w-full mx-auto max-w-[1600px] px-6 md:px-16 lg:px-24 xl:px-28 ${first ? 'pt-6 md:pt-10' : 'pt-28 md:pt-40'} pb-16 md:pb-28`}>
       {/* HEADING — single line, fluid sizing so it always fits without wrapping */}
       <FadeIn>
         <h2 className="display uppercase leading-[0.95] tracking-[-0.005em] text-ink whitespace-nowrap text-[clamp(2.25rem,9vw,9rem)]">
