@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { CATEGORIES, FOOTER_MARK } from '@/lib/brand'
+import { CATEGORIES, FOOTER_MARK, FOOTER_WORDMARK } from '@/lib/brand'
 
 export default function SiteFooter() {
   const year = new Date().getFullYear()
@@ -8,21 +8,32 @@ export default function SiteFooter() {
       <div className="container-editorial py-20">
         <div className="grid md:grid-cols-12 gap-12">
           <div className="md:col-span-5">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <span
-                className="inline-flex items-center justify-center overflow-hidden rounded-sm shrink-0"
-                style={{ width: 40, height: 40 }}
+                className="inline-flex items-center justify-center overflow-hidden shrink-0"
+                style={{ width: 44, height: 44 }}
+                aria-hidden="true"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={FOOTER_MARK}
-                  alt="FailureSays"
-                  width={40}
-                  height={40}
+                  alt=""
+                  width={44}
+                  height={44}
                   className="w-full h-full object-contain"
                 />
               </span>
-              <span className="display text-2xl tracking-[0.02em] text-paper">FailureSays</span>
+              <span
+                className="inline-flex items-center"
+                style={{ height: 32 }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={FOOTER_WORDMARK}
+                  alt="FailureSays"
+                  className="h-full w-auto object-contain block"
+                />
+              </span>
             </div>
             <p className="mt-8 text-paper/70 text-lg max-w-md leading-relaxed">
               A premium editorial publication for founders, operators, investors, and lifelong learners.
