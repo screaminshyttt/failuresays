@@ -274,6 +274,18 @@ frontend:
         agent: "main"
         comment: "Verified visually via screenshots. Empty states show for all categories."
 
+  - task: "Footer branding - official brand mark replacement"
+    implemented: true
+    working: true
+    file: "components/site-footer.jsx, lib/brand.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Footer branding fix verified successfully. Tested on Home, About, and Blog pages. Image src correct (https://customer-assets.emergentagent.com/job_avoid-failure/artifacts/ipsybdhk_2.jpg), dimensions 40x40, loads successfully (naturalWidth: 1881), positioned LEFT of FailureSays text, no reference to old placeholder (75ww1p3w_3.png). Verified on desktop (1920x1080) and mobile (390x844) viewports. Footer component reused consistently across all pages."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
@@ -313,3 +325,18 @@ agent_communication:
       13. No ObjectId leaks - all responses use UUID
       
       All backend APIs are production-ready. No critical issues found.
+  - agent: "testing"
+    message: |
+      ✅ FOOTER BRANDING VERIFICATION COMPLETED - ALL TESTS PASSED
+      
+      Verified footer branding fix across multiple pages and viewports:
+      1. Footer logo URL correct: https://customer-assets.emergentagent.com/job_avoid-failure/artifacts/ipsybdhk_2.jpg
+      2. Image dimensions correct: 40x40 pixels
+      3. Image loads successfully (naturalWidth: 1881, complete: true)
+      4. Image positioned to the LEFT of "FailureSays" text in flex container
+      5. "FailureSays" text visible next to logo
+      6. NO reference to old placeholder "75ww1p3w_3.png" in footer DOM
+      7. Consistent across all pages tested: Home, About, Blog
+      8. Works correctly on desktop (1920x1080) and mobile (390x844) viewports
+      
+      Footer component (SiteFooter) is reused consistently across all pages. The official brand mark is properly integrated.
