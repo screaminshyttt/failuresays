@@ -36,9 +36,10 @@ export default function Home() {
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
                 <div className="eyebrow">FailureSays &middot; Est. 2025</div>
                 <p className="mt-6 text-muted text-lg max-w-lg">Startup thinking, business analysis, and lessons hidden inside failure.</p>
-                <h1 className="display mt-8 text-[44px] xs:text-[52px] sm:text-[72px] md:text-[96px] lg:text-[112px] leading-[0.95] md:leading-[0.92] break-words">
-                  Every Great Company<br /><span className="text-muted">Has a Story.</span><br />
-                  Every Failure Has<br />a Lesson.
+                <h1 className="display mt-8 text-[40px] xs:text-[48px] sm:text-[64px] md:text-[84px] lg:text-[96px] leading-[1.02] md:leading-[1.02] break-words">
+                  The harder you try<br />
+                  to avoid failure,<br />
+                  <span className="text-muted">the longer it owns you.</span>
                 </h1>
                 <div className="mt-12 flex flex-wrap items-center gap-4">
                   <Link href="/wisdom" className="btn-primary">Explore Wisdom <ArrowRight className="w-4 h-4" /></Link>
