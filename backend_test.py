@@ -10,7 +10,7 @@ import sys
 from typing import Dict, Any, Optional
 
 # Load environment variables
-BASE_URL = "https://business-lessons.preview.emergentagent.com/api"
+BASE_URL = "https://avoid-failure.preview.emergentagent.com/api"
 ADMIN_PASSWORD = "Fs-8Kx!Qp2vR9nZ7wBmT4jY"
 
 # Test state

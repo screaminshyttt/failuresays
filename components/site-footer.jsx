@@ -14,7 +14,7 @@ export default function SiteFooter() {
               A premium editorial publication for founders, operators, investors, and lifelong learners.
             </p>
             <blockquote className="mt-10 pl-4 border-l border-paper/30 text-paper/90 italic max-w-md">
-              &ldquo;The greatest advantage isn&rsquo;t avoiding failure&mdash;it&rsquo;s learning faster than everyone else.&rdquo;
+              &ldquo;The harder you try to avoid failure, the longer it owns you.&rdquo;
             </blockquote>
           </div>
           <div className="md:col-span-3">
