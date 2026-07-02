@@ -36,7 +36,7 @@ export default function Home() {
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
                 <div className="eyebrow">FailureSays &middot; Est. 2025</div>
                 <p className="mt-6 text-muted text-lg max-w-lg">Startup thinking, business analysis, and lessons hidden inside failure.</p>
-                <h1 className="display mt-8 text-[64px] md:text-[112px] leading-[0.92]">
+                <h1 className="display mt-8 text-[44px] xs:text-[52px] sm:text-[72px] md:text-[96px] lg:text-[112px] leading-[0.95] md:leading-[0.92] break-words">
                   Every Great Company<br /><span className="text-muted">Has a Story.</span><br />
                   Every Failure Has<br />a Lesson.
                 </h1>

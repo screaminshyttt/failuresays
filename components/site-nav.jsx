@@ -27,23 +27,25 @@ export default function SiteNav() {
     >
       <div className="container-editorial relative flex items-center justify-between">
         {/* Logos - left */}
-        <Link href="/" className="flex items-center gap-3 relative z-10" aria-label="FailureSays home">
+        <Link href="/" className="flex items-center gap-2 sm:gap-3 relative z-10 shrink-0" aria-label="FailureSays home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={NAV_MARK}
             alt=""
-            style={{ height: scrolled ? 36 : 46, width: scrolled ? 36 : 46, objectFit: 'cover', display: 'block' }}
+            style={{ height: scrolled ? 30 : 40, width: scrolled ? 30 : 40, objectFit: 'cover', display: 'block' }}
+            className="sm:!h-[36px] sm:!w-[36px] md:!h-[46px] md:!w-[46px]"
           />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={NAV_WORDMARK}
             alt="FailureSays"
-            style={{ height: scrolled ? 28 : 36, width: 'auto', display: 'block' }}
+            style={{ height: scrolled ? 22 : 30, width: 'auto', display: 'block' }}
+            className="sm:!h-[28px] md:!h-[36px]"
           />
         </Link>
 
-        {/* Menu - absolutely centered with respect to the WHOLE bar */}
-        <nav className="hidden md:flex items-center gap-9 text-[13px] uppercase tracking-[0.2em] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        {/* Menu - absolutely centered with respect to the WHOLE bar (desktop only) */}
+        <nav className="hidden lg:flex items-center gap-7 xl:gap-9 text-[12px] xl:text-[13px] uppercase tracking-[0.2em] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <Link href="/" className="link-underline">Home</Link>
           <div
             className="relative"
@@ -80,11 +82,11 @@ export default function SiteNav() {
           <Link href="/contact" className="link-underline">Contact</Link>
         </nav>
 
-        {/* Right side - just mobile menu button (empty on desktop) */}
+        {/* Right side - mobile menu button (visible below lg) */}
         <div className="flex items-center relative z-10">
           <button
             aria-label="Menu"
-            className="md:hidden p-2"
+            className="lg:hidden p-2 -mr-2"
             onClick={() => setOpen(v => !v)}
           >
             {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -99,7 +101,7 @@ export default function SiteNav() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden border-t border-white/10"
+            className="lg:hidden overflow-hidden border-t border-white/10"
           >
             <div className="container-editorial py-6 flex flex-col gap-4 text-sm uppercase tracking-[0.2em]">
               <Link href="/" onClick={() => setOpen(false)}>Home</Link>
