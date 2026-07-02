@@ -70,12 +70,6 @@ export default function SiteNav() {
                         {c.label}
                       </Link>
                     ))}
-                    <Link
-                      href="/wisdom"
-                      className="block px-4 py-3 text-[11px] tracking-[0.24em] border-t border-rule text-muted hover:text-ink"
-                    >
-                      All Wisdom →
-                    </Link>
                   </div>
                 </motion.div>
               )}
