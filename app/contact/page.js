@@ -61,12 +61,12 @@ export default function ContactPage() {
             className="group mt-3 inline-flex items-center gap-3 flex-wrap"
           >
             <span
-              className="font-semibold tracking-[-0.02em] leading-[1.05] text-ink lowercase group-hover:opacity-80 transition-opacity break-all"
-              style={{ fontSize: 'clamp(1.5rem, 4.2vw, 3.5rem)' }}
+              className="font-semibold tracking-[-0.015em] leading-[1.1] text-ink lowercase group-hover:opacity-80 transition-opacity break-all"
+              style={{ fontSize: 'clamp(1.25rem, 2.8vw, 2.25rem)' }}
             >
               {CONTACT_EMAIL}
             </span>
-            <ArrowUpRight className="w-6 h-6 md:w-8 md:h-8 text-ink group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6 text-ink group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           </a>
 
           <div className="mt-4">
