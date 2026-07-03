@@ -36,13 +36,13 @@ export default function CategoryPage() {
   return (
     <div className="bg-paper">
       {/* HERO */}
-      <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14">
-        <Link href="/wisdom" className="text-xs uppercase tracking-[0.24em] text-muted link-underline">← Wisdom</Link>
-        <div className="eyebrow mt-8">{String(index).padStart(2, '0')} — Series</div>
+      <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14 text-center">
+        <Link href="/wisdom" className="inline-block text-xs uppercase tracking-[0.24em] text-muted link-underline">← Wisdom</Link>
+        <div className="eyebrow mt-8">{String(index).padStart(2, '0')} — {cat.label}</div>
         <h1 className="page-heading-wrap mt-4">{cat.label.toUpperCase()}.</h1>
-        <p className="mt-8 max-w-3xl text-lg md:text-xl text-muted leading-relaxed">{cat.desc}</p>
+        <p className="mt-8 mx-auto max-w-3xl text-lg md:text-xl text-muted leading-relaxed">{cat.desc}</p>
 
-        <div className="mt-10 flex items-center gap-3 border border-rule bg-white px-4 py-3 max-w-md">
+        <div className="mt-10 mx-auto flex items-center gap-3 border border-rule bg-white px-4 py-3 max-w-md">
           <Search className="w-4 h-4 text-muted" />
           <input value={q} onChange={e => setQ(e.target.value)} placeholder={`Search ${cat.label}…`} className="flex-1 bg-transparent outline-none text-sm" />
         </div>
