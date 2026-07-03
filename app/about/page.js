@@ -21,7 +21,7 @@ function EditorialSection({ heading, children, first = false }) {
     <section className={`container-editorial-wide ${first ? 'pt-4 md:pt-6' : 'pt-28 md:pt-40'} pb-16 md:pb-28`}>
       {/* HEADING — single line, fluid sizing so it always fits without wrapping */}
       <FadeIn>
-        <h2 className="page-heading">{heading}</h2>
+        <h2 className="page-heading text-center">{heading}</h2>
       </FadeIn>
 
       {/* BODY — spans the full editorial container for a premium long-form feel */}
