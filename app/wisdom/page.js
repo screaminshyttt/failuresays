@@ -36,6 +36,12 @@ export default function WisdomPage() {
         <p className="mt-8 mx-auto max-w-3xl text-lg md:text-xl text-muted leading-relaxed">
           Everything worth knowing, organized. Startup analyses, company improvement ideas, case studies, startup ideas, and failures &amp; lessons — all in one place.
         </p>
+        
+        {/* Search bar - centered */}
+        <div className="mt-10 mx-auto flex items-center gap-3 border border-rule bg-white px-4 py-3 max-w-md">
+          <Search className="w-4 h-4 text-muted" />
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search all wisdom…" className="flex-1 bg-transparent outline-none text-sm" />
+        </div>
       </section>
 
       {/* Category tiles */}
@@ -54,19 +60,13 @@ export default function WisdomPage() {
         </div>
       </section>
 
-      {/* Search + filters */}
+      {/* Filters */}
       <section className="container-editorial-wide py-10 border-t border-rule">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="flex items-center gap-3 border border-rule bg-white px-4 py-3 w-full md:max-w-md">
-            <Search className="w-4 h-4 text-muted" />
-            <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search all wisdom…" className="flex-1 bg-transparent outline-none text-sm" />
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <FilterChip active={active==='all'} onClick={() => setActive('all')}>All</FilterChip>
-            {CATEGORIES.filter(c => c.slug !== 'blog').map(c => (
-              <FilterChip key={c.slug} active={active===c.slug} onClick={() => setActive(c.slug)}>{c.label}</FilterChip>
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-2 justify-center">
+          <FilterChip active={active==='all'} onClick={() => setActive('all')}>All</FilterChip>
+          {CATEGORIES.filter(c => c.slug !== 'blog').map(c => (
+            <FilterChip key={c.slug} active={active===c.slug} onClick={() => setActive(c.slug)}>{c.label}</FilterChip>
+          ))}
         </div>
       </section>
 
