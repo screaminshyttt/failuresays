@@ -4,7 +4,7 @@ import { Mail, Twitter, Linkedin, Github, Copy, Check, ArrowUpRight } from 'luci
 import { toast } from 'sonner'
 import { useState } from 'react'
 
-const CONTACT_EMAIL = 'work.ananyagupta@gmail.com'
+const CONTACT_EMAIL = 'founder@failuresays.com'
 
 const SOCIALS = [
   { label: 'Twitter', href: '#', Icon: Twitter },
