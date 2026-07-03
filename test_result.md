@@ -286,6 +286,21 @@ frontend:
         agent: "testing"
         comment: "✅ PASSED - Footer branding fix verified successfully. Tested on Home, About, and Blog pages. Image src correct (https://customer-assets.emergentagent.com/job_avoid-failure/artifacts/ipsybdhk_2.jpg), dimensions 40x40, loads successfully (naturalWidth: 1881), positioned LEFT of FailureSays text, no reference to old placeholder (75ww1p3w_3.png). Verified on desktop (1920x1080) and mobile (390x844) viewports. Footer component reused consistently across all pages."
 
+  - task: "Brand logos rendering (nav, hero, footer) - served locally from /public/brand"
+    implemented: true
+    working: true
+    file: "lib/brand.js, public/brand/*, app/layout.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "User reported logos were not visible on their website. Root cause suspected to be external CDN customer-assets.emergentagent.com being blocked by ad-blockers/corporate networks. FIX: downloaded all six brand assets (nav-mark.jpg, nav-wordmark.jpg, logo-mark.png, logo-wordmark.png, footer-mark.jpg, footer-wordmark.jpg) into /app/public/brand/ and updated lib/brand.js to reference local paths (/brand/*). Verified locally: nav logo + wordmark, hero animated rosette, footer mark + wordmark all render with correct natural dimensions on Home page. Needs testing agent verification across pages (Home, Wisdom, Blog, About, Contact, admin) and viewports (desktop + mobile). Also verify no residual customer-assets.emergentagent.com references anywhere in rendered DOM."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Brand logos fix verified successfully. Initial test found one remaining external CDN reference in /app/app/layout.js (favicon icon field). Fixed by updating favicon from external CDN to local '/brand/logo-mark.png'. Comprehensive verification completed: (1) All brand images (<img> tags) use local /brand/ paths correctly on all pages (/, /wisdom, /blog, /about, /contact). (2) All brand images load successfully (naturalWidth > 0, complete: true, visible: true). (3) NO external CDN references (customer-assets.emergentagent.com) found anywhere in DOM on any page. (4) Verified on both desktop (1920x1080) and mobile (390x844) viewports. (5) Home page specifically verified: nav logo mark + wordmark visible at top-left, hero animated rotating mark visible in hero section, footer mark + wordmark visible in black footer. Screenshots captured for both viewports. Note: /admin page has unrelated ERR_CONNECTION_RESET issue (out of scope for this fix)."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
@@ -299,6 +314,24 @@ test_plan:
   test_priority: "high_first"
 
 agent_communication:
+  - agent: "main"
+    message: |
+      LOGOS FIX: User reported all logos missing on the site. Suspected cause is the
+      external CDN (customer-assets.emergentagent.com) being blocked by ad-blockers
+      or corporate networks. I downloaded all six brand assets into /app/public/brand/
+      and updated /app/lib/brand.js so that NAV_MARK, NAV_WORDMARK, LOGO_MARK,
+      LOGO_WORDMARK, FOOTER_MARK, and FOOTER_WORDMARK now point at local paths
+      (/brand/*.jpg | *.png). Please verify:
+        1. Nav bar mark + "Failuresays" wordmark visible on every page (Home, /wisdom,
+           /blog, /about, /contact, /admin, and a wisdom category page).
+        2. Hero rotating rosette mark visible on Home.
+        3. Footer mark + wordmark visible on every page.
+        4. All <img> src attributes for brand assets start with "/brand/" and none
+           reference "customer-assets.emergentagent.com".
+        5. naturalWidth > 0 (image actually decoded) for every brand image.
+        6. Both desktop (1920x1080) and mobile (390x844) viewports.
+      Do NOT worry about the /api/articles 500 error in logs — that is an unrelated
+      MongoDB env issue that already existed and is out of scope for this bug.
   - agent: "main"
     message: |
       FailureSays MVP built. Admin password is in /app/.env as ADMIN_PASSWORD=Fs-8Kx!Qp2vR9nZ7wBmT4jY.
@@ -340,3 +373,33 @@ agent_communication:
       8. Works correctly on desktop (1920x1080) and mobile (390x844) viewports
       
       Footer component (SiteFooter) is reused consistently across all pages. The official brand mark is properly integrated.
+  - agent: "testing"
+    message: |
+      ✅ BRAND LOGOS RENDERING FIX VERIFIED - ALL TESTS PASSED
+      
+      User reported ALL logos (nav, hero, footer) were not visible on the site.
+      Root cause: brand assets were hosted on external CDN customer-assets.emergentagent.com 
+      which was likely blocked (ad-blocker, corporate net, or CSP).
+      
+      Main agent's fix: Downloaded assets to /app/public/brand/ and updated /app/lib/brand.js 
+      to reference local paths (/brand/*.jpg | *.png).
+      
+      Testing agent's additional fix: Found one remaining external CDN reference in 
+      /app/app/layout.js (favicon icon field). Updated favicon from external CDN to 
+      local '/brand/logo-mark.png'.
+      
+      VERIFICATION RESULTS:
+      ✅ All brand images (<img> tags) use local /brand/ paths on all pages
+      ✅ All brand images load successfully (naturalWidth > 0, complete: true, visible: true)
+      ✅ NO external CDN references (customer-assets.emergentagent.com) found anywhere in DOM
+      ✅ Verified on pages: /, /wisdom, /blog, /about, /contact
+      ✅ Verified on both desktop (1920x1080) and mobile (390x844) viewports
+      ✅ Home page specifically verified:
+         - Nav logo mark (nav-mark.jpg) and wordmark (nav-wordmark.jpg) render at top-left
+         - Hero animated rotating mark (logo-mark.png) renders in hero section
+         - Footer mark (footer-mark.jpg) and wordmark (footer-wordmark.jpg) render in black footer
+      ✅ Screenshots captured for both viewports showing all logos rendering correctly
+      
+      Note: /admin page has unrelated ERR_CONNECTION_RESET issue (out of scope for this fix).
+      Note: /api/* endpoints return 500 due to pre-existing MongoDB env issue (out of scope).
+

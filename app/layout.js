@@ -14,7 +14,7 @@ export const metadata = {
   description: 'A premium editorial publication for founders, operators, investors, and lifelong learners. Startup analyses, company improvement ideas, case studies, startup ideas, and failures & lessons.',
   keywords: ['startup analysis', 'business strategy', 'case studies', 'entrepreneurship', 'failure lessons', 'founders'],
   icons: {
-    icon: 'https://customer-assets.emergentagent.com/job_business-lessons/artifacts/1hcdj5be_2.svg',
+    icon: '/brand/logo-mark.png',
   },
   openGraph: {
     title: 'FailureSays',
