@@ -22,7 +22,7 @@ module.exports = {
       },
       colors: {
         // FailureSays brand palette
-        paper: '#F1EFE7',
+        paper: '#F7F4EE',
         cream: '#F7F5EF',
         card: '#FFFFFF',
         ink: '#000000',

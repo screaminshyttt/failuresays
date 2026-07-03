@@ -31,7 +31,7 @@ export default function ContactPage() {
   // desktop viewport (above the fold) with a consistent 32/48/64 rhythm.
   return (
     <div className="bg-paper">
-      <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14">
+      <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14 text-center">
         {/* HERO ------------------------------------------------------- */}
         <div className="eyebrow">Say Hello</div>
         <motion.h1
@@ -42,7 +42,7 @@ export default function ContactPage() {
         >
           CONTACT.
         </motion.h1>
-        <p className="mt-4 max-w-2xl text-base md:text-lg text-muted leading-relaxed">
+        <p className="mt-4 mx-auto max-w-2xl text-base md:text-lg text-muted leading-relaxed">
           For ideas, essays, collaborations, or just a conversation about failure and what it teaches.
         </p>
 

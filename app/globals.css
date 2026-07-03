@@ -6,7 +6,7 @@
   html { scroll-behavior: smooth; }
   html, body { overflow-x: hidden; max-width: 100vw; }
   body {
-    background: #F1EFE7;
+    background: #F7F4EE;
     color: #000000;
     font-family: var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -18,7 +18,7 @@
 }
 
 @layer components {
-  .container-editorial { @apply mx-auto w-full max-w-[1400px] px-5 sm:px-6 md:px-10; }
+  .container-editorial { @apply mx-auto w-full max-w-[1200px] px-5 sm:px-6 md:px-10; }
   .container-editorial-wide { @apply mx-auto w-full max-w-[1600px] px-5 sm:px-6 md:px-16 lg:px-24 xl:px-28; }
   .page-heading { @apply display uppercase leading-[0.95] tracking-[-0.005em] text-ink md:whitespace-nowrap; font-size: clamp(2rem, 9vw, 9rem); word-break: break-word; }
   .page-heading-wrap { @apply display uppercase leading-[0.95] tracking-[-0.005em] text-ink; font-size: clamp(1.75rem, 8vw, 8rem); word-break: break-word; }
@@ -33,11 +33,11 @@
   .card-editorial { @apply bg-white border border-[#DDD9CF] transition-all duration-500; }
   .card-editorial:hover { @apply -translate-y-1 shadow-[0_20px_40px_-20px_rgba(0,0,0,0.15)]; }
   .noise::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(#000 0.5px, transparent 0.5px); background-size: 3px 3px; opacity: 0.03; pointer-events: none; }
-  .prose-editorial { @apply text-[17px] leading-[1.85] text-black; }
+  .prose-editorial { @apply text-[16px] leading-[1.8] text-black; }
   .prose-editorial h1 { @apply display text-5xl md:text-7xl mt-12 mb-6; }
   .prose-editorial h2 { @apply display text-4xl md:text-5xl mt-14 mb-5; }
   .prose-editorial h3 { @apply text-2xl font-semibold mt-10 mb-4; }
-  .prose-editorial p { @apply my-5; }
+  .prose-editorial p { @apply my-6; }
   .prose-editorial a { @apply underline decoration-1 underline-offset-4 hover:text-muted; }
   .prose-editorial blockquote { @apply border-l-2 border-black pl-6 my-8 italic text-xl text-muted; }
   .prose-editorial ul { @apply list-disc pl-6 my-5 space-y-2; }

@@ -30,10 +30,10 @@ export default function BlogPage() {
   return (
     <div className="bg-paper">
       {/* HERO */}
-      <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14">
+      <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14 text-center">
         <div className="eyebrow">The Journal</div>
         <h1 className="page-heading mt-4">BLOG.</h1>
-        <p className="mt-8 max-w-3xl text-lg md:text-xl text-muted leading-relaxed">
+        <p className="mt-8 mx-auto max-w-3xl text-lg md:text-xl text-muted leading-relaxed">
           Essays on startups, strategy, philosophy, and the founder mind.
         </p>
       </section>

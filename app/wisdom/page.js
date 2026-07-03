@@ -30,10 +30,10 @@ export default function WisdomPage() {
   return (
     <div className="bg-paper">
       {/* HERO */}
-      <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14">
+      <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14 text-center">
         <div className="eyebrow">Knowledge Hub</div>
         <h1 className="page-heading mt-4">WISDOM.</h1>
-        <p className="mt-8 max-w-3xl text-lg md:text-xl text-muted leading-relaxed">
+        <p className="mt-8 mx-auto max-w-3xl text-lg md:text-xl text-muted leading-relaxed">
           Everything worth knowing, organized. Startup analyses, company improvement ideas, case studies, startup ideas, and failures &amp; lessons — all in one place.
         </p>
       </section>

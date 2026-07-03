@@ -121,13 +121,11 @@ function SectionShell({ eyebrow, title, href, description, children, tone = 'pap
     <section className={`${bg} py-24`}>
       <div className="container-editorial">
         <FadeUp>
-          <div className="flex items-end justify-between gap-6 flex-wrap">
-            <div>
-              <div className="eyebrow">{eyebrow}</div>
-              <h2 className="display mt-4 text-5xl md:text-7xl">{title}</h2>
-              {description && <p className="mt-4 max-w-xl text-muted">{description}</p>}
-            </div>
-            {href && <Link href={href} className="text-xs uppercase tracking-[0.24em] link-underline">View all →</Link>}
+          <div className="text-center">
+            <div className="eyebrow">{eyebrow}</div>
+            <h2 className="display mt-4 text-5xl md:text-7xl">{title}</h2>
+            {description && <p className="mt-4 mx-auto max-w-xl text-muted">{description}</p>}
+            {href && <Link href={href} className="inline-block mt-6 text-xs uppercase tracking-[0.24em] link-underline">View all →</Link>}
           </div>
         </FadeUp>
         <div className="mt-14">{children}</div>
