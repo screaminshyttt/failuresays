@@ -1,7 +1,5 @@
 'use client'
 import { useEffect, useState, useMemo } from 'react'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { Search } from 'lucide-react'
 import { CATEGORIES } from '@/lib/brand'
 import ArticleCard, { EmptyState } from '@/components/article-card'
@@ -41,22 +39,6 @@ export default function WisdomPage() {
         <div className="mt-10 mx-auto flex items-center gap-3 border border-rule bg-white px-4 py-3 max-w-md">
           <Search className="w-4 h-4 text-muted" />
           <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search all wisdom…" className="flex-1 bg-transparent outline-none text-sm" />
-        </div>
-      </section>
-
-      {/* Category tiles */}
-      <section className="container-editorial-wide pb-12">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {CATEGORIES.filter(c => c.slug !== 'blog').map((c, i) => (
-            <motion.div key={c.slug} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }}>
-              <Link href={`/wisdom/${c.slug}`} className="card-editorial p-6 block h-full">
-                <div className="eyebrow">{String(i+1).padStart(2,'0')}</div>
-                <div className="display text-3xl mt-4 leading-none">{c.label}</div>
-                <p className="mt-4 text-sm text-muted">{c.desc}</p>
-                <div className="mt-8 text-xs uppercase tracking-[0.24em]">Enter →</div>
-              </Link>
-            </motion.div>
-          ))}
         </div>
       </section>
 
