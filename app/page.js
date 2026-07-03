@@ -91,27 +91,6 @@ export default function Home() {
       <SectionShell eyebrow="07 — Lessons" title="Lessons from Failure" href="/wisdom/lessons-from-failure" description="What went wrong, why it happened, and what we can learn." tone="grey">
         <CardGrid articles={by('lessons-from-failure')} loading={loading} cols={3} />
       </SectionShell>
-
-      {/* CATEGORIES CTA */}
-      <section className="container-editorial py-24">
-        <FadeUp>
-          <div className="border-t border-rule pt-12">
-            <div className="grid md:grid-cols-2 gap-10 items-end">
-              <h3 className="display text-5xl md:text-7xl">One publication.<br />Six perspectives.</h3>
-              <p className="text-lg text-muted max-w-md">Independent journalism and analysis for founders, operators, investors, and professionals shaping the future of business.</p>
-            </div>
-            <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-6 gap-4">
-              {CATEGORIES.filter(c => c.slug !== 'blog').map((c, i) => (
-                <Link key={c.slug} href={`/wisdom/${c.slug}`} className="card-editorial p-6 group">
-                  <div className="eyebrow">{String(i+1).padStart(2,'0')}</div>
-                  <div className="mt-4 text-xl leading-snug">{c.label}</div>
-                  <div className="mt-6 text-xs uppercase tracking-[0.24em] text-subtle group-hover:text-ink">Enter →</div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </FadeUp>
-      </section>
     </div>
   )
 }
