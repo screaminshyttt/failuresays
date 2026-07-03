@@ -60,31 +60,36 @@ export default function Home() {
         <LatestGrid articles={all.slice(0, 6)} loading={loading} />
       </SectionShell>
 
-      {/* STARTUP ANALYSES - horizontal scroll */}
-      <SectionShell eyebrow="02 — Series" title="Startup Analyses" href="/wisdom/startup-analyses" description="Deep dives into how great companies actually work, told without the myth-making." tone="grey">
-        <HorizontalScroll articles={by('startup-analyses')} loading={loading} />
+      {/* COMPANY ANALYSES - horizontal scroll */}
+      <SectionShell eyebrow="02 — Deep Dives" title="Company Analyses" href="/wisdom/company-analyses" description="Deep dives into how successful companies operate and compete." tone="grey">
+        <HorizontalScroll articles={by('company-analyses')} loading={loading} />
       </SectionShell>
 
-      {/* COMPANY IMPROVEMENT IDEAS */}
-      <SectionShell eyebrow="03 — Ideas" title="Company Improvement Ideas" href="/wisdom/company-improvement-ideas" description="Opinionated, practical directions to make good companies great." tone="grey">
-        <CardGrid articles={by('company-improvement-ideas')} loading={loading} cols={3} />
+      {/* BUSINESS STRATEGY */}
+      <SectionShell eyebrow="03 — Strategy" title="Business Strategy" href="/wisdom/business-strategy" description="Analysis of strategic decisions and competitive positioning." tone="grey">
+        <CardGrid articles={by('business-strategy')} loading={loading} cols={3} />
       </SectionShell>
 
-      {/* CASE STUDIES - large editorial */}
-      <SectionShell eyebrow="04 — Long form" title="Case Studies" href="/wisdom/case-studies" description="Investigations of pivotal moments — rises, falls, comebacks, betrayals." tone="grey">
+      {/* INDUSTRY RESEARCH - large editorial */}
+      <SectionShell eyebrow="04 — Research" title="Industry Research" href="/wisdom/industry-research" description="Market trends, dynamics, and sector-specific insights." tone="grey">
         <div className="grid md:grid-cols-2 gap-8">
-          {loading ? <Skeletons count={2} large /> : (by('case-studies').length === 0 ? <div className="md:col-span-2"><EmptyState /></div> : by('case-studies').slice(0, 4).map(a => <ArticleCard key={a.id} article={a} variant="large" />))}
+          {loading ? <Skeletons count={2} large /> : (by('industry-research').length === 0 ? <div className="md:col-span-2"><EmptyState /></div> : by('industry-research').slice(0, 4).map(a => <ArticleCard key={a.id} article={a} variant="large" />))}
         </div>
       </SectionShell>
 
-      {/* STARTUP IDEAS */}
-      <SectionShell eyebrow="05 — Sketches" title="Startup Ideas" href="/wisdom/startup-ideas" description="Overlooked problems worth building a company around." tone="grey">
-        <CardGrid articles={by('startup-ideas')} loading={loading} cols={3} />
+      {/* FOUNDER PERSPECTIVES */}
+      <SectionShell eyebrow="05 — Leadership" title="Founder Perspectives" href="/wisdom/founder-perspectives" description="Leadership lessons and founder decision-making frameworks." tone="grey">
+        <CardGrid articles={by('founder-perspectives')} loading={loading} cols={3} />
       </SectionShell>
 
-      {/* FAILURES & LESSONS - same warm palette as other sections */}
-      <SectionShell eyebrow="06 — Autopsies" title="Failures & Lessons" href="/wisdom/failures-lessons" description="What died, why it died, and what it taught us. The best classroom is the graveyard." tone="grey">
-        <CardGrid articles={by('failures-lessons')} loading={loading} cols={3} />
+      {/* VENTURE CAPITAL */}
+      <SectionShell eyebrow="06 — Funding" title="Venture Capital" href="/wisdom/venture-capital" description="Investment trends, funding rounds, and VC ecosystem coverage." tone="grey">
+        <CardGrid articles={by('venture-capital')} loading={loading} cols={3} />
+      </SectionShell>
+
+      {/* LESSONS FROM FAILURE */}
+      <SectionShell eyebrow="07 — Lessons" title="Lessons from Failure" href="/wisdom/lessons-from-failure" description="What went wrong, why it happened, and what we can learn." tone="grey">
+        <CardGrid articles={by('lessons-from-failure')} loading={loading} cols={3} />
       </SectionShell>
 
       {/* CATEGORIES CTA */}
@@ -92,10 +97,10 @@ export default function Home() {
         <FadeUp>
           <div className="border-t border-rule pt-12">
             <div className="grid md:grid-cols-2 gap-10 items-end">
-              <h3 className="display text-5xl md:text-7xl">One publication.<br />Five ways to think.</h3>
-              <p className="text-lg text-muted max-w-md">A knowledge platform for founders, operators, investors, students, and ambitious people who love learning.</p>
+              <h3 className="display text-5xl md:text-7xl">One publication.<br />Six perspectives.</h3>
+              <p className="text-lg text-muted max-w-md">Independent journalism and analysis for founders, operators, investors, and professionals shaping the future of business.</p>
             </div>
-            <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-6 gap-4">
               {CATEGORIES.filter(c => c.slug !== 'blog').map((c, i) => (
                 <Link key={c.slug} href={`/wisdom/${c.slug}`} className="card-editorial p-6 group">
                   <div className="eyebrow">{String(i+1).padStart(2,'0')}</div>
@@ -178,7 +183,7 @@ function Skeletons({ count = 3, dark = false, large = false }) {
 }
 
 function MarqueeBanner() {
-  const items = ['Startup Analyses', 'Company Improvement Ideas', 'Case Studies', 'Startup Ideas', 'Failures & Lessons', 'Philosophy', 'Psychology', 'Strategy']
+  const items = ['Company Analyses', 'Business Strategy', 'Industry Research', 'Founder Perspectives', 'Venture Capital', 'Lessons from Failure', 'Editorial', 'Innovation']
   return (
     <div className="border-y border-rule bg-cream overflow-hidden">
       <div className="flex whitespace-nowrap animate-marquee py-5 text-[13px] uppercase tracking-[0.28em] text-muted">
