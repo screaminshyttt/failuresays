@@ -10,9 +10,11 @@ export default function WisdomPage() {
   const [all, setAll] = useState([])
   const [loading, setLoading] = useState(true)
   const [q, setQ] = useState('')
+  const [hero, setHero] = useState({ eyebrow: 'Knowledge Hub', title: 'WISDOM.', subtitle: 'Everything worth knowing, organized. Startup analyses, company improvement ideas, case studies, startup ideas, and failures & lessons — all in one place.', searchPlaceholder: 'Search all wisdom…' })
 
   useEffect(() => {
     fetch('/api/articles').then(r => r.json()).then(d => { setAll(d.articles || []); setLoading(false) })
+    fetch('/api/pages/wisdom').then(r => r.json()).then(d => { if (d?.page) setHero(h => ({ ...h, ...d.page })) }).catch(() => {})
   }, [])
 
   const filtered = useMemo(() => {
@@ -29,16 +31,16 @@ export default function WisdomPage() {
     <div className="bg-transparent">
       {/* HERO */}
       <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14 text-center">
-        <div className="eyebrow-accent">Knowledge Hub</div>
-        <h1 className="page-heading mt-4">WISDOM.</h1>
+        <div className="eyebrow-accent">{hero.eyebrow}</div>
+        <h1 className="page-heading mt-4">{hero.title}</h1>
         <p className="mt-8 mx-auto max-w-3xl text-lg md:text-xl text-muted leading-relaxed">
-          Everything worth knowing, organized. Startup analyses, company improvement ideas, case studies, startup ideas, and failures &amp; lessons — all in one place.
+          {hero.subtitle}
         </p>
         
         {/* Search bar - centered */}
         <div className="mt-10 mx-auto flex items-center gap-3 border border-rule bg-white px-4 py-3 max-w-md focus-within:border-lime transition-colors">
           <Search className="w-4 h-4 text-muted" />
-          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search all wisdom…" className="flex-1 bg-transparent outline-none text-sm" />
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder={hero.searchPlaceholder} className="flex-1 bg-transparent outline-none text-sm" />
         </div>
       </section>
 

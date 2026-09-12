@@ -6,9 +6,11 @@ import ArticleCard, { EmptyState } from '@/components/article-card'
 export default function BlogPage() {
   const [all, setAll] = useState([])
   const [loading, setLoading] = useState(true)
+  const [hero, setHero] = useState({ eyebrow: 'The Journal', title: 'BLOG.', subtitle: 'Essays on startups, strategy, philosophy, and the founder mind.' })
 
   useEffect(() => {
     fetch('/api/articles').then(r => r.json()).then(d => { setAll(d.articles || []); setLoading(false) })
+    fetch('/api/pages/blog').then(r => r.json()).then(d => { if (d?.page) setHero(h => ({ ...h, ...d.page })) }).catch(() => {})
   }, [])
 
   const featured = all.find(a => a.featured)
@@ -18,10 +20,10 @@ export default function BlogPage() {
     <div className="bg-transparent">
       {/* HERO */}
       <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14 text-center">
-        <div className="eyebrow-accent">The Journal</div>
-        <h1 className="page-heading mt-4">BLOG.</h1>
+        <div className="eyebrow-accent">{hero.eyebrow}</div>
+        <h1 className="page-heading mt-4">{hero.title}</h1>
         <p className="mt-8 mx-auto max-w-3xl text-lg md:text-xl text-muted leading-relaxed">
-          Essays on startups, strategy, philosophy, and the founder mind.
+          {hero.subtitle}
         </p>
       </section>
 

@@ -87,6 +87,31 @@ const DEFAULT_PAGES = {
       { eyebrow: '07 — Lessons', title: 'Lessons from Failure', description: 'What went wrong, why it happened, and what we can learn.', href: '/wisdom/lessons-from-failure' },
     ],
   },
+  blog: {
+    slug: 'blog', eyebrow: 'The Journal', title: 'BLOG.',
+    subtitle: 'Essays on startups, strategy, philosophy, and the founder mind.',
+  },
+  wisdom: {
+    slug: 'wisdom', eyebrow: 'Knowledge Hub', title: 'WISDOM.',
+    subtitle: 'Everything worth knowing, organized. Startup analyses, company improvement ideas, case studies, startup ideas, and failures & lessons — all in one place.',
+    searchPlaceholder: 'Search all wisdom\u2026',
+  },
+  footer: {
+    slug: 'footer',
+    tagline: 'A premium editorial publication for founders, operators, investors, and lifelong learners.',
+    quote: 'The harder you try to avoid failure, the longer it owns you.',
+    exploreTitle: 'Explore',
+    exploreLinks: [
+      { label: 'Home', href: '/' },
+      { label: 'Wisdom', href: '/wisdom' },
+      { label: 'Blog', href: '/blog' },
+      { label: 'About', href: '/about' },
+      { label: 'Contact', href: '/contact' },
+    ],
+    categoriesTitle: 'Categories',
+    copyright: 'FailureSays. All rights reserved.',
+    rightNote: 'Made with intent, not urgency.',
+  },
 }
 
 async function ensurePage(pages, slug) {

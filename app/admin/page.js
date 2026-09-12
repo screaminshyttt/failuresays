@@ -108,9 +108,10 @@ function Shell({ token, onLogout }) {
   useEffect(() => { refresh() }, [])
 
   if (pageSlug) {
-    return pageSlug === 'home'
-      ? <HomeEditor token={token} onClose={() => setPageSlug(null)} />
-      : <PageEditor token={token} slug={pageSlug} onClose={() => setPageSlug(null)} />
+    if (pageSlug === 'home') return <HomeEditor token={token} onClose={() => setPageSlug(null)} />
+    if (pageSlug === 'footer') return <FooterEditor token={token} onClose={() => setPageSlug(null)} />
+    if (pageSlug === 'blog' || pageSlug === 'wisdom') return <SimplePageEditor token={token} slug={pageSlug} onClose={() => setPageSlug(null)} />
+    return <PageEditor token={token} slug={pageSlug} onClose={() => setPageSlug(null)} />
   }
   if (editing !== null) {
     return <Editor token={token} id={editing.id} cats={cats} posts={posts} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); refresh() }} />
@@ -298,8 +299,11 @@ function Categories({ token, cats, refresh }) {
 /* ------------------------------- Pages (About / Contact) ------------------------------- */
 const PAGE_DEFS = [
   { slug: 'home', name: 'Home', desc: 'Hero text & buttons, marquee words, and the 7 section titles.' },
+  { slug: 'blog', name: 'Blog', desc: 'Blog listing hero: eyebrow, title, subtitle.' },
+  { slug: 'wisdom', name: 'Wisdom', desc: 'Wisdom hub hero + search placeholder.' },
   { slug: 'about', name: 'About', desc: 'Hero + editorial content blocks.' },
   { slug: 'contact', name: 'Contact', desc: 'Hero, email, socials, contact form + blocks.' },
+  { slug: 'footer', name: 'Footer', desc: 'Global footer tagline, quote, links & copyright.' },
 ]
 function Pages({ onEdit }) {
   return (
@@ -532,6 +536,138 @@ function HomeEditor({ token, onClose }) {
               <Field label="Description"><textarea rows={2} value={s.description || ''} onChange={e => setSec(i, 'description', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
             </div>
           ))}
+        </section>
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------- Simple page editor (Blog / Wisdom) ------------------------------- */
+const SIMPLE_PAGE_SCHEMA = {
+  blog: { name: 'Blog', fields: [['eyebrow', 'Eyebrow', 'text'], ['title', 'Title', 'text'], ['subtitle', 'Subtitle', 'textarea']] },
+  wisdom: { name: 'Wisdom', fields: [['eyebrow', 'Eyebrow', 'text'], ['title', 'Title', 'text'], ['subtitle', 'Subtitle', 'textarea'], ['searchPlaceholder', 'Search box placeholder', 'text']] },
+}
+
+function SimplePageEditor({ token, slug, onClose }) {
+  const schema = SIMPLE_PAGE_SCHEMA[slug] || { name: slug, fields: [] }
+  const [form, setForm] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [dirty, setDirty] = useState(false)
+
+  useEffect(() => {
+    api(`/admin/pages/${slug}`, {}, token).then(d => setForm(d.page || {})).catch(e => toast.error(e.message))
+  }, [slug])
+  useEffect(() => {
+    const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = '' } }
+    window.addEventListener('beforeunload', h); return () => window.removeEventListener('beforeunload', h)
+  }, [dirty])
+
+  if (!form) return <div className="min-h-screen grid place-items-center text-gray-500">Loading…</div>
+  const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setDirty(true) }
+  async function save() {
+    setSaving(true)
+    try { await api(`/admin/pages/${slug}`, { method: 'PUT', body: JSON.stringify(form) }, token); setDirty(false); toast.success('Saved.') }
+    catch (e) { toast.error(e.message) } finally { setSaving(false) }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center justify-between sticky top-0 z-20">
+        <div className="flex items-center gap-3">
+          <button onClick={() => { if (!dirty || confirm('Discard unsaved changes?')) onClose() }} className="p-2 hover:bg-gray-100 rounded"><ChevronLeft className="w-5 h-5" /></button>
+          <div><div className="font-semibold">{schema.name} page</div>{dirty && <div className="text-xs text-amber-600">Unsaved changes</div>}</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <a href={`/${slug}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-gray-300 bg-white px-3 py-2 text-sm"><Eye className="w-4 h-4" /> View</a>
+          <button disabled={saving} onClick={save} className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 text-sm"><Save className="w-4 h-4" /> Save</button>
+        </div>
+      </header>
+      <div className="p-4 md:p-8 max-w-2xl w-full mx-auto">
+        <div className="bg-white border border-gray-200 p-5 space-y-4">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Page hero</div>
+          {schema.fields.map(([key, label, type]) => (
+            <Field key={key} label={label}>
+              {type === 'textarea'
+                ? <textarea rows={3} value={form[key] || ''} onChange={e => set(key, e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" />
+                : <input value={form[key] || ''} onChange={e => set(key, e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" />}
+            </Field>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------- Footer editor ------------------------------- */
+function FooterEditor({ token, onClose }) {
+  const [form, setForm] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [dirty, setDirty] = useState(false)
+
+  useEffect(() => {
+    api('/admin/pages/footer', {}, token).then(d => {
+      const p = d.page || {}
+      setForm({ tagline: '', quote: '', exploreTitle: 'Explore', exploreLinks: [], categoriesTitle: 'Categories', copyright: '', rightNote: '', ...p })
+    }).catch(e => toast.error(e.message))
+  }, [])
+  useEffect(() => {
+    const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = '' } }
+    window.addEventListener('beforeunload', h); return () => window.removeEventListener('beforeunload', h)
+  }, [dirty])
+
+  if (!form) return <div className="min-h-screen grid place-items-center text-gray-500">Loading…</div>
+  const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setDirty(true) }
+  const links = form.exploreLinks || []
+  const setLink = (i, k, v) => { const a = links.map(x => ({ ...x })); a[i][k] = v; set('exploreLinks', a) }
+  async function save() {
+    setSaving(true)
+    try { await api('/admin/pages/footer', { method: 'PUT', body: JSON.stringify(form) }, token); setDirty(false); toast.success('Footer saved.') }
+    catch (e) { toast.error(e.message) } finally { setSaving(false) }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center justify-between sticky top-0 z-20">
+        <div className="flex items-center gap-3">
+          <button onClick={() => { if (!dirty || confirm('Discard unsaved changes?')) onClose() }} className="p-2 hover:bg-gray-100 rounded"><ChevronLeft className="w-5 h-5" /></button>
+          <div><div className="font-semibold">Footer</div>{dirty && <div className="text-xs text-amber-600">Unsaved changes</div>}</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <a href="/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-gray-300 bg-white px-3 py-2 text-sm"><Eye className="w-4 h-4" /> View</a>
+          <button disabled={saving} onClick={save} className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 text-sm"><Save className="w-4 h-4" /> Save</button>
+        </div>
+      </header>
+      <div className="p-4 md:p-8 max-w-2xl w-full mx-auto space-y-6">
+        <section className="bg-white border border-gray-200 p-5 space-y-4">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Brand column</div>
+          <Field label="Tagline"><textarea rows={2} value={form.tagline} onChange={e => set('tagline', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+          <Field label="Quote (leave empty to hide)"><textarea rows={2} value={form.quote} onChange={e => set('quote', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+        </section>
+
+        <section className="bg-white border border-gray-200 p-5 space-y-3">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Explore column</div>
+          <Field label="Column title"><input value={form.exploreTitle} onChange={e => set('exploreTitle', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+          <span className="text-xs font-medium text-gray-500 block">Links</span>
+          {links.map((l, i) => (
+            <div key={i} className="flex gap-1">
+              <input value={l.label} onChange={e => setLink(i, 'label', e.target.value)} placeholder="Label" className="w-32 border border-gray-300 px-2 py-1.5 text-sm" />
+              <input value={l.href} onChange={e => setLink(i, 'href', e.target.value)} placeholder="/path" className="flex-1 border border-gray-300 px-2 py-1.5 text-sm" />
+              <button onClick={() => set('exploreLinks', links.filter((_, x) => x !== i))} className="px-1 text-gray-400 hover:text-red-600"><X className="w-4 h-4" /></button>
+            </div>
+          ))}
+          <button onClick={() => set('exploreLinks', [...links, { label: '', href: '' }])} className="text-xs text-gray-500 hover:text-black">+ Add link</button>
+        </section>
+
+        <section className="bg-white border border-gray-200 p-5 space-y-3">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Categories column</div>
+          <Field label="Column title"><input value={form.categoriesTitle} onChange={e => set('categoriesTitle', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+          <p className="text-xs text-gray-400">The category links are generated automatically from your Categories.</p>
+        </section>
+
+        <section className="bg-white border border-gray-200 p-5 space-y-4">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Bottom bar</div>
+          <Field label="Copyright text (year is added automatically)"><input value={form.copyright} onChange={e => set('copyright', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+          <Field label="Right-side note"><input value={form.rightNote} onChange={e => set('rightNote', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
         </section>
       </div>
     </div>
