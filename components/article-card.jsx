@@ -1,6 +1,5 @@
 'use client'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { CATEGORY_MAP } from '@/lib/brand'
 
@@ -10,12 +9,8 @@ export default function ArticleCard({ article, variant = 'default', dark = false
   // Horizontal "row" card used in the Latest Articles strip (text left, image right)
   if (variant === 'row') {
     return (
-      <motion.article
-        whileHover={{ y: -6 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="group bg-white border border-rule overflow-hidden"
-      >
-        <Link href={`/blog/${article.slug}`} className="flex items-stretch">
+      <article className="card-editorial group overflow-hidden h-full">
+        <Link href={`/blog/${article.slug}`} className="flex items-stretch h-full">
           <div className="flex-1 p-6 flex flex-col">
             <span className="badge-cat self-start">{cat.label}</span>
             <h3 className="mt-4 display text-2xl md:text-3xl leading-[0.95]">{article.title}</h3>
@@ -31,17 +26,15 @@ export default function ArticleCard({ article, variant = 'default', dark = false
             </div>
           )}
         </Link>
-      </motion.article>
+      </article>
     )
   }
 
-  const base = dark ? 'bg-[#0A0A0A] border-white/10 text-paper' : 'bg-white border-rule text-ink'
+  const rootCls = dark
+    ? 'group border bg-[#0A0A0A] border-white/10 text-paper overflow-hidden transition-all duration-500 hover:-translate-y-1'
+    : 'card-editorial group overflow-hidden'
   return (
-    <motion.article
-      whileHover={{ y: -6 }}
-      transition={{ duration: 0.5, ease: [0.22,1,0.36,1] }}
-      className={`group border ${base} overflow-hidden`}
-    >
+    <article className={rootCls}>
       <Link href={`/blog/${article.slug}`}>
         {article.coverImage && (
           <div className="relative aspect-[16/10] overflow-hidden bg-cream">
@@ -65,7 +58,7 @@ export default function ArticleCard({ article, variant = 'default', dark = false
           </div>
         </div>
       </Link>
-    </motion.article>
+    </article>
   )
 }
 
