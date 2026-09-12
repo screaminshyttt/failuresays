@@ -4,7 +4,7 @@ import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Linkedin, Link2, Check, List, X } from 'lucide-react'
+import { ArrowLeft, List, X } from 'lucide-react'
 import { CATEGORY_MAP } from '@/lib/brand'
 import BlockRenderer, { buildToc } from '@/components/article/blocks'
 import MetricsHero from '@/components/article/metrics-hero'
@@ -12,22 +12,6 @@ import MetricsHero from '@/components/article/metrics-hero'
 function fmtDate(d) {
   if (!d) return ''
   try { return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) } catch { return '' }
-}
-
-function ShareRow({ title }) {
-  const [copied, setCopied] = useState(false)
-  const url = typeof window !== 'undefined' ? window.location.href : ''
-  const copy = async () => { try { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 1500) } catch {} }
-  const btn = 'w-9 h-9 border border-rule bg-white flex items-center justify-center hover:bg-black hover:text-paper transition-colors'
-  return (
-    <div className="flex items-center gap-2">
-      <a className={btn} aria-label="Share on LinkedIn" target="_blank" rel="noopener noreferrer" href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`}><Linkedin className="w-4 h-4" /></a>
-      <a className={btn} aria-label="Share on X" target="_blank" rel="noopener noreferrer" href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title || '')}`}>
-        <span className="text-[13px] font-bold leading-none">X</span>
-      </a>
-      <button className={btn} aria-label="Copy link" onClick={copy}>{copied ? <Check className="w-4 h-4 text-lime" /> : <Link2 className="w-4 h-4" />}</button>
-    </div>
-  )
 }
 
 function Toc({ items, mobile = false }) {
@@ -80,14 +64,13 @@ export default function ArticleView({ article, related = [] }) {
   const cat = CATEGORY_MAP[article.category] || { label: article.category, slug: article.category }
   const hasBlocks = Array.isArray(article.blocks) && article.blocks.length > 0
   const showToc = article.showToc !== false && toc.length > 0
-  const showShare = article.showShare !== false
   const author = article.author || {}
 
   return (
     <article className="bg-transparent">
       {/* HEADER — centered editorial */}
       <div className="container-editorial-wide pt-6 md:pt-10 pb-6">
-        <div className="max-w-[760px] mx-auto text-center">
+        <div className="max-w-[830px] mx-auto text-center">
           <Link href={`/wisdom/${cat.slug}`} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.26em] text-muted link-underline">
             <ArrowLeft className="w-3 h-3" /> {article.articleLabel || cat.label}
           </Link>
@@ -106,20 +89,17 @@ export default function ArticleView({ article, related = [] }) {
             <span className="mt-4 w-16 h-[3px] bg-lime" />
           </div>
 
-          {(author.name || showShare) && (
+          {author.name && (
             <div className="mt-8 flex items-center justify-center gap-6 flex-wrap">
-              {author.name && (
-                <div className="flex items-center gap-3">
-                  {author.photo
-                    ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={author.photo} alt={author.name} className="w-10 h-10 rounded-full object-cover border border-rule" />
-                    : <span className="w-10 h-10 rounded-full bg-black text-paper flex items-center justify-center text-sm font-semibold">{author.name[0]}</span>}
-                  <div className="text-left">
-                    <div className="text-sm font-medium">{author.name}</div>
-                    {author.bio && <div className="text-[11px] text-subtle max-w-[220px] truncate">{author.bio}</div>}
-                  </div>
+              <div className="flex items-center gap-3">
+                {author.photo
+                  ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={author.photo} alt={author.name} className="w-10 h-10 rounded-full object-cover border border-rule" />
+                  : <span className="w-10 h-10 rounded-full bg-black text-paper flex items-center justify-center text-sm font-semibold">{author.name[0]}</span>}
+                <div className="text-left">
+                  <div className="text-sm font-medium">{author.name}</div>
+                  {author.bio && <div className="text-[11px] text-subtle max-w-[220px] truncate">{author.bio}</div>}
                 </div>
-              )}
-              {showShare && <ShareRow title={article.title} />}
+              </div>
             </div>
           )}
         </div>
@@ -136,9 +116,9 @@ export default function ArticleView({ article, related = [] }) {
       )}
 
       {/* BODY */}
-      <div className="container-editorial-wide py-12 md:py-16">
+      <div className="container-editorial-wide pt-8 md:pt-10 pb-12 md:pb-16">
         {/* mobile TOC */}
-        {showToc && <div className="max-w-[760px] mx-auto mb-8">{<Toc items={toc} mobile />}</div>}
+        {showToc && <div className="max-w-[830px] mx-auto mb-8">{<Toc items={toc} mobile />}</div>}
 
         <div className="xl:grid xl:grid-cols-12 xl:gap-8">
           {showToc && (
@@ -146,7 +126,7 @@ export default function ArticleView({ article, related = [] }) {
               <Toc items={toc} />
             </aside>
           )}
-          <div className={`${showToc ? 'xl:col-span-6 xl:col-start-4' : 'xl:col-span-8 xl:col-start-3'} max-w-[760px] mx-auto w-full`}>
+          <div className={`${showToc ? 'xl:col-span-7 xl:col-start-4' : 'xl:col-span-8 xl:col-start-3'} max-w-[830px] mx-auto w-full`}>
             {hasBlocks ? (
               <BlockRenderer blocks={article.blocks} relatedMap={relatedMap} MetricsHero={MetricsHero} />
             ) : (
