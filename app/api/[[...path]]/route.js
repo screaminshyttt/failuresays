@@ -67,6 +67,26 @@ const DEFAULT_PAGES = {
     showForm: true,
     blocks: [],
   },
+  home: {
+    slug: 'home',
+    hero: {
+      eyebrow: 'FailureSays \u00b7 Est. 2025',
+      intro: 'Startup thinking, business analysis, and lessons hidden inside failure.',
+      headlineLines: ['The harder you try', 'to avoid failure,', 'the longer it owns you.'],
+      ctaPrimaryLabel: 'Explore Wisdom', ctaPrimaryHref: '/wisdom',
+      ctaSecondaryLabel: 'Read Latest', ctaSecondaryHref: '/blog',
+    },
+    marquee: ['Company Analyses', 'Business Strategy', 'Industry Research', 'Founder Perspectives', 'Venture Capital', 'Lessons from Failure', 'Editorial', 'Innovation'],
+    sections: [
+      { eyebrow: '01 — Fresh', title: 'Latest Articles', description: 'The most recent pieces across every category.', href: '/blog' },
+      { eyebrow: '02 — Deep Dives', title: 'Company Analyses', description: 'Deep dives into how successful companies operate and compete.', href: '/wisdom/company-analyses' },
+      { eyebrow: '03 — Strategy', title: 'Business Strategy', description: 'Analysis of strategic decisions and competitive positioning.', href: '/wisdom/business-strategy' },
+      { eyebrow: '04 — Research', title: 'Industry Research', description: 'Market trends, dynamics, and sector-specific insights.', href: '/wisdom/industry-research' },
+      { eyebrow: '05 — Leadership', title: 'Founder Perspectives', description: 'Leadership lessons and founder decision-making frameworks.', href: '/wisdom/founder-perspectives' },
+      { eyebrow: '06 — Funding', title: 'Venture Capital', description: 'Investment trends, funding rounds, and VC ecosystem coverage.', href: '/wisdom/venture-capital' },
+      { eyebrow: '07 — Lessons', title: 'Lessons from Failure', description: 'What went wrong, why it happened, and what we can learn.', href: '/wisdom/lessons-from-failure' },
+    ],
+  },
 }
 
 async function ensurePage(pages, slug) {

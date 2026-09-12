@@ -108,7 +108,9 @@ function Shell({ token, onLogout }) {
   useEffect(() => { refresh() }, [])
 
   if (pageSlug) {
-    return <PageEditor token={token} slug={pageSlug} onClose={() => setPageSlug(null)} />
+    return pageSlug === 'home'
+      ? <HomeEditor token={token} onClose={() => setPageSlug(null)} />
+      : <PageEditor token={token} slug={pageSlug} onClose={() => setPageSlug(null)} />
   }
   if (editing !== null) {
     return <Editor token={token} id={editing.id} cats={cats} posts={posts} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); refresh() }} />
@@ -295,6 +297,7 @@ function Categories({ token, cats, refresh }) {
 
 /* ------------------------------- Pages (About / Contact) ------------------------------- */
 const PAGE_DEFS = [
+  { slug: 'home', name: 'Home', desc: 'Hero text & buttons, marquee words, and the 7 section titles.' },
   { slug: 'about', name: 'About', desc: 'Hero + editorial content blocks.' },
   { slug: 'contact', name: 'Contact', desc: 'Hero, email, socials, contact form + blocks.' },
 ]
@@ -398,6 +401,138 @@ function PageEditor({ token, slug, onClose }) {
             </div>
           )}
         </aside>
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------- Home page editor ------------------------------- */
+const HOME_SECTION_FEEDS = [
+  'Latest articles (all categories)',
+  'Company Analyses grid',
+  'Business Strategy grid',
+  'Industry Research grid',
+  'Founder Perspectives grid',
+  'Venture Capital grid',
+  'Lessons from Failure grid',
+]
+
+function HomeEditor({ token, onClose }) {
+  const [form, setForm] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [dirty, setDirty] = useState(false)
+
+  useEffect(() => {
+    api('/admin/pages/home', {}, token).then(d => {
+      const p = d.page || {}
+      setForm({
+        hero: { eyebrow: '', intro: '', headlineLines: [''], ctaPrimaryLabel: '', ctaPrimaryHref: '', ctaSecondaryLabel: '', ctaSecondaryHref: '', ...(p.hero || {}) },
+        marquee: Array.isArray(p.marquee) ? p.marquee : [],
+        sections: Array.isArray(p.sections) ? p.sections : [],
+      })
+    }).catch(e => toast.error(e.message))
+  }, [])
+
+  useEffect(() => {
+    const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = '' } }
+    window.addEventListener('beforeunload', h); return () => window.removeEventListener('beforeunload', h)
+  }, [dirty])
+
+  if (!form) return <div className="min-h-screen grid place-items-center text-gray-500">Loading…</div>
+
+  const setHero = (k, v) => { setForm(f => ({ ...f, hero: { ...f.hero, [k]: v } })); setDirty(true) }
+  const lines = form.hero.headlineLines || []
+  const setLine = (i, v) => { const a = [...lines]; a[i] = v; setHero('headlineLines', a) }
+  const addLine = () => setHero('headlineLines', [...lines, ''])
+  const delLine = (i) => setHero('headlineLines', lines.filter((_, x) => x !== i))
+  const setMarq = (i, v) => { const a = [...form.marquee]; a[i] = v; setForm(f => ({ ...f, marquee: a })); setDirty(true) }
+  const setSec = (i, k, v) => { const a = form.sections.map(x => ({ ...x })); a[i] = { ...a[i], [k]: v }; setForm(f => ({ ...f, sections: a })); setDirty(true) }
+
+  async function save() {
+    setSaving(true)
+    try {
+      const clean = {
+        ...form,
+        marquee: form.marquee.map(s => String(s).trim()).filter(Boolean),
+        hero: { ...form.hero, headlineLines: lines.map(l => String(l)).filter(l => l.trim().length) },
+      }
+      await api('/admin/pages/home', { method: 'PUT', body: JSON.stringify(clean) }, token)
+      setForm(clean); setDirty(false); toast.success('Home page saved.')
+    } catch (e) { toast.error(e.message) } finally { setSaving(false) }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center justify-between sticky top-0 z-20">
+        <div className="flex items-center gap-3">
+          <button onClick={() => { if (!dirty || confirm('Discard unsaved changes?')) onClose() }} className="p-2 hover:bg-gray-100 rounded"><ChevronLeft className="w-5 h-5" /></button>
+          <div><div className="font-semibold">Home page</div>{dirty && <div className="text-xs text-amber-600">Unsaved changes</div>}</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <a href="/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-gray-300 bg-white px-3 py-2 text-sm"><Eye className="w-4 h-4" /> View</a>
+          <button disabled={saving} onClick={save} className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 text-sm"><Save className="w-4 h-4" /> Save</button>
+        </div>
+      </header>
+
+      <div className="p-4 md:p-8 max-w-3xl w-full mx-auto space-y-8">
+        {/* HERO */}
+        <section className="bg-white border border-gray-200 p-5 space-y-4">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Hero</div>
+          <Field label="Eyebrow (small label above intro)"><input value={form.hero.eyebrow} onChange={e => setHero('eyebrow', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+          <Field label="Intro line"><textarea rows={2} value={form.hero.intro} onChange={e => setHero('intro', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+          <div>
+            <span className="text-xs font-medium text-gray-500 block mb-1.5">Headline lines <span className="text-gray-400 normal-case">(each is a new line; the last line shows in grey)</span></span>
+            {lines.map((ln, i) => (
+              <div key={i} className="flex gap-1 mb-1">
+                <input value={ln} onChange={e => setLine(i, e.target.value)} placeholder={`Line ${i + 1}`} className="flex-1 border border-gray-300 px-3 py-2 text-sm" />
+                <button onClick={() => delLine(i)} className="px-2 text-gray-400 hover:text-red-600"><X className="w-4 h-4" /></button>
+              </div>
+            ))}
+            <button onClick={addLine} className="text-xs text-gray-500 hover:text-black">+ Add line</button>
+          </div>
+        </section>
+
+        {/* BUTTONS */}
+        <section className="bg-white border border-gray-200 p-5 space-y-4">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Hero buttons</div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Field label="Primary button label"><input value={form.hero.ctaPrimaryLabel} onChange={e => setHero('ctaPrimaryLabel', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+            <Field label="Primary button link"><input value={form.hero.ctaPrimaryHref} onChange={e => setHero('ctaPrimaryHref', e.target.value)} placeholder="/wisdom" className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+            <Field label="Secondary button label"><input value={form.hero.ctaSecondaryLabel} onChange={e => setHero('ctaSecondaryLabel', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+            <Field label="Secondary button link"><input value={form.hero.ctaSecondaryHref} onChange={e => setHero('ctaSecondaryHref', e.target.value)} placeholder="/blog" className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+          </div>
+        </section>
+
+        {/* MARQUEE */}
+        <section className="bg-white border border-gray-200 p-5 space-y-3">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Scrolling marquee words</div>
+          <div className="flex flex-wrap gap-2">
+            {form.marquee.map((w, i) => (
+              <div key={i} className="flex items-center gap-1 border border-gray-300">
+                <input value={w} onChange={e => setMarq(i, e.target.value)} className="px-2 py-1.5 text-sm w-40 outline-none" />
+                <button onClick={() => { setForm(f => ({ ...f, marquee: f.marquee.filter((_, x) => x !== i) })); setDirty(true) }} className="px-1.5 text-gray-400 hover:text-red-600"><X className="w-4 h-4" /></button>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => { setForm(f => ({ ...f, marquee: [...f.marquee, ''] })); setDirty(true) }} className="text-xs text-gray-500 hover:text-black">+ Add word</button>
+        </section>
+
+        {/* SECTIONS */}
+        <section className="space-y-3">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Content sections</div>
+          <p className="text-xs text-gray-400 -mt-1">Edit the wording of each homepage section. The articles shown in each section are pulled automatically by category.</p>
+          {form.sections.map((s, i) => (
+            <div key={i} className="bg-white border border-gray-200 p-4 space-y-3">
+              <div className="text-[11px] uppercase tracking-[0.14em] text-gray-500">Section {i + 1} <span className="text-gray-400 normal-case">· {HOME_SECTION_FEEDS[i] || 'Article grid'}</span></div>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <Field label="Eyebrow (e.g. 01 — Fresh)"><input value={s.eyebrow || ''} onChange={e => setSec(i, 'eyebrow', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+                <Field label="View-all link"><input value={s.href || ''} onChange={e => setSec(i, 'href', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+              </div>
+              <Field label="Title"><input value={s.title || ''} onChange={e => setSec(i, 'title', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-base font-semibold" /></Field>
+              <Field label="Description"><textarea rows={2} value={s.description || ''} onChange={e => setSec(i, 'description', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+            </div>
+          ))}
+        </section>
       </div>
     </div>
   )
