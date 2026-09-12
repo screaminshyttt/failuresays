@@ -70,7 +70,7 @@ export default function ArticleView({ article, related = [] }) {
     <article className="bg-transparent">
       {/* HEADER — centered editorial */}
       <div className="container-editorial-wide pt-6 md:pt-10 pb-6">
-        <div className="max-w-[830px] mx-auto text-center">
+        <div className="max-w-[860px] mx-auto text-center">
           <Link href={`/wisdom/${cat.slug}`} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.26em] text-muted link-underline">
             <ArrowLeft className="w-3 h-3" /> {article.articleLabel || cat.label}
           </Link>
@@ -115,30 +115,30 @@ export default function ArticleView({ article, related = [] }) {
         </div>
       )}
 
-      {/* BODY */}
-      <div className="container-editorial-wide pt-8 md:pt-10 pb-12 md:pb-16">
-        {/* mobile TOC */}
-        {showToc && <div className="max-w-[830px] mx-auto mb-8">{<Toc items={toc} mobile />}</div>}
-
-        <div className="xl:grid xl:grid-cols-12 xl:gap-8">
+      {/* BODY — one central vertical axis; body always centered on the page */}
+      <div className="container-editorial-wide pt-6 md:pt-8 pb-12 md:pb-16">
+        <div className="relative max-w-[860px] mx-auto w-full">
+          {/* Floating desktop TOC — sits in the left gutter so the body stays centered */}
           {showToc && (
-            <aside className="hidden xl:block xl:col-span-3">
+            <aside className="hidden 2xl:block absolute top-0 right-full mr-8 w-[210px]">
               <Toc items={toc} />
             </aside>
           )}
-          <div className={`${showToc ? 'xl:col-span-7 xl:col-start-4' : 'xl:col-span-8 xl:col-start-3'} max-w-[830px] mx-auto w-full`}>
-            {hasBlocks ? (
-              <BlockRenderer blocks={article.blocks} relatedMap={relatedMap} MetricsHero={MetricsHero} />
-            ) : (
-              <div className="prose-editorial max-w-none text-[18px] md:text-[19px]">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{article.content || ''}</ReactMarkdown>
-              </div>
-            )}
 
-            <div className="mt-16 pt-8 border-t border-rule flex items-center justify-between">
-              <Link href="/blog" className="text-xs uppercase tracking-[0.24em] link-underline">← All essays</Link>
-              <Link href={`/wisdom/${cat.slug}`} className="text-xs uppercase tracking-[0.24em] link-underline">More in {cat.label} →</Link>
+          {/* Inline / collapsible TOC on smaller screens — keeps the body centered */}
+          {showToc && <div className="2xl:hidden mb-8">{<Toc items={toc} mobile />}</div>}
+
+          {hasBlocks ? (
+            <BlockRenderer blocks={article.blocks} relatedMap={relatedMap} MetricsHero={MetricsHero} />
+          ) : (
+            <div className="prose-editorial max-w-none text-[18px] md:text-[19px]">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{article.content || ''}</ReactMarkdown>
             </div>
+          )}
+
+          <div className="mt-16 pt-8 border-t border-rule flex items-center justify-between">
+            <Link href="/blog" className="text-xs uppercase tracking-[0.24em] link-underline">← All essays</Link>
+            <Link href={`/wisdom/${cat.slug}`} className="text-xs uppercase tracking-[0.24em] link-underline">More in {cat.label} →</Link>
           </div>
         </div>
 
