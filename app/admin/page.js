@@ -607,6 +607,64 @@ function Toggle({ label, v, on }) {
   return <button onClick={on} className="w-full flex items-center justify-between text-sm py-1"><span>{label}</span><span className={`w-9 h-5 rounded-full relative transition-colors ${v ? 'bg-lime' : 'bg-gray-300'}`}><span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${v ? 'left-[18px]' : 'left-0.5'}`} /></span></button>
 }
 
+/* ------------------------------- Rich paragraph (selection → Bold) ------------------------------- */
+// Toggles semantic markdown bold (**…**) around the current textarea selection.
+// Rendered to <strong> by ReactMarkdown on the public page & preview.
+function toggleBold(text, start, end) {
+  const before = text.slice(0, start)
+  const sel = text.slice(start, end)
+  const after = text.slice(end)
+  // Selection itself already wrapped: **sel**  -> unwrap
+  if (sel.length >= 4 && sel.startsWith('**') && sel.endsWith('**')) {
+    const inner = sel.slice(2, -2)
+    return { text: before + inner + after, start, end: start + inner.length }
+  }
+  // Markers sit just outside the selection: **[sel]** -> unwrap
+  if (before.endsWith('**') && after.startsWith('**')) {
+    return { text: before.slice(0, -2) + sel + after.slice(2), start: start - 2, end: end - 2 }
+  }
+  // No selection -> insert empty markers, place caret between them
+  if (start === end) {
+    return { text: before + '****' + after, start: start + 2, end: start + 2 }
+  }
+  // Default -> wrap the selection, keep the inner text selected
+  return { text: before + '**' + sel + '**' + after, start: start + 2, end: start + 2 + sel.length }
+}
+
+function ParagraphEditor({ value, onChange }) {
+  const ref = useRef(null)
+  const applyBold = () => {
+    const el = ref.current
+    const v = value || ''
+    const start = el ? (el.selectionStart ?? v.length) : v.length
+    const end = el ? (el.selectionEnd ?? start) : start
+    const res = toggleBold(v, start, end)
+    onChange(res.text)
+    // restore focus + selection after React re-renders the textarea value
+    requestAnimationFrame(() => {
+      if (!ref.current) return
+      ref.current.focus()
+      try { ref.current.setSelectionRange(res.start, res.end) } catch { /* selection restore best-effort */ }
+    })
+  }
+  const onKeyDown = (e) => {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'b' || e.key === 'B')) { e.preventDefault(); applyBold() }
+  }
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-1.5">
+        {/* onMouseDown preventDefault keeps the textarea selection while clicking the button */}
+        <button type="button" onMouseDown={e => e.preventDefault()} onClick={applyBold} title="Bold (⌘/Ctrl+B)"
+          className="w-7 h-7 flex items-center justify-center border border-gray-300 text-sm font-bold text-gray-700 hover:border-black hover:bg-gray-50 rounded-sm">B</button>
+        <span className="text-[11px] text-gray-400">Select text, then click B or press ⌘/Ctrl+B</span>
+      </div>
+      <textarea ref={ref} value={value || ''} onChange={e => onChange(e.target.value)} onKeyDown={onKeyDown} rows={4}
+        placeholder="Write paragraph… (supports **bold**, *italic*, [link](url))"
+        className="w-full border border-gray-200 px-3 py-2 text-sm outline-none focus:border-black" />
+    </div>
+  )
+}
+
 /* ------------------------------- Block edit cards ------------------------------- */
 function AddBlock({ onAdd }) {
   const [open, setOpen] = useState(false)
@@ -642,7 +700,7 @@ function BlockCard({ block, index, total, posts, onChange, onMove, onDup, onDel 
         </div>
       </div>
       <div className="p-3 space-y-2">
-        {block.type === 'paragraph' && <textarea value={d.text} onChange={e => onChange({ ...d, text: e.target.value })} rows={4} placeholder="Write paragraph… (supports **bold**, *italic*, [link](url))" className="w-full border border-gray-200 px-3 py-2 text-sm outline-none focus:border-black" />}
+        {block.type === 'paragraph' && <ParagraphEditor value={d.text || ''} onChange={(text) => onChange({ ...d, text })} />}
         {block.type === 'heading' && (<>
           <input value={d.label} onChange={e => onChange({ ...d, label: e.target.value })} placeholder="Eyebrow label (e.g. 01 — CUSTOMER TRUST)" className="w-full border border-gray-200 px-3 py-2 text-sm" />
           <input value={d.text} onChange={e => onChange({ ...d, text: e.target.value })} placeholder="Heading text" className="w-full border border-gray-200 px-3 py-2 text-base font-semibold" />
