@@ -566,6 +566,95 @@ agent_communication_cms:
       8) GET /api/articles?ids=<id1>,<id2> returns those articles.
       9) Verify NO _id (ObjectId) leaks anywhere; all ids are UUID. Slug collision on PUT returns 409.
       Clean up any test data at the end.
+
+pages_cms:
+  - task: "Page content CMS for About & Contact (pages collection)"
+    implemented: true
+    working: true
+    file: "app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "GET /api/pages/:slug (public) auto-seeds & returns page (about/contact) with eyebrow,title,subtitle,blocks[] and (contact) email,socials[],showForm. GET /api/admin/pages/:slug (auth) returns editable page. PUT /api/admin/pages/:slug (auth) upserts arbitrary fields incl blocks[]. Public About/Contact pages now fetch this content."
+      - working: true
+        agent: "testing"
+        comment: "✅ ALL 7 PAGE CMS TESTS PASSED - Page content CMS fully verified. (1) GET /api/pages/about returns 200 with page {title:'ABOUT.', eyebrow:'Our Mission', subtitle, blocks:[6 blocks]} - no _id leak. (2) GET /api/pages/contact returns 200 with page {title:'CONTACT.', email:'founder@failuresays.com', socials:[3 items], showForm:true} - no _id leak. (3) GET /api/admin/pages/about WITHOUT token returns 401 (auth required). (4) GET /api/admin/pages/about WITH Bearer token returns 200 with page. (5) PUT /api/admin/pages/about (auth) with {subtitle:'TEST SUB', blocks:[{id:'t1',type:'paragraph',data:{text:'hello world'}}]} returns 200, updated page persisted correctly (verified via GET /api/pages/about). (6) PUT /api/admin/pages/contact (auth) with {email:'hi@x.com', socials:[{label:'X',href:'#'}], showForm:false} returns 200, changes persisted correctly (verified via GET /api/pages/contact). (7) GET /api/pages/nope (unknown slug) returns 404. CRITICAL CLEANUP: Both pages FULLY RESTORED to original defaults - About page restored to original subtitle and 6 blocks, Contact page restored to founder@failuresays.com, showForm:true, and 3 socials (Twitter, LinkedIn, GitHub). No MongoDB ObjectId leaks detected in any response. All upsert operations working correctly. Page CMS is PRODUCTION-READY."
+
+agent_communication_pages:
+  - agent: "main"
+    message: |
+      Test the NEW page content CMS (admin password 'qwesdfcvb'):
+      1) GET /api/pages/about -> 200, page with title 'ABOUT.' and blocks[] (>=1).
+      2) GET /api/pages/contact -> 200, page with email and socials[] (>=1), showForm true.
+      3) GET /api/admin/pages/about WITHOUT token -> 401; WITH token -> 200 returns page.
+      4) PUT /api/admin/pages/about (auth) {"subtitle":"X","blocks":[{"id":"t1","type":"paragraph","data":{"text":"hello"}}]} -> 200 returns updated page; then GET /api/pages/about reflects the change (subtitle & blocks persisted). Restore/whatever, just verify persistence.
+      5) PUT /api/admin/pages/contact (auth) {"email":"hi@x.com","socials":[{"label":"X","href":"#"}],"showForm":false} -> persists; GET reflects it.
+      6) No _id leaks. Unknown page slug (e.g. /api/pages/nope) -> 404.
+      NOTE: After testing, PUT /api/admin/pages/about back to subtitle "An independent editorial publication on startups, strategy, and the lessons hidden inside failure." and PUT /api/admin/pages/contact back to email "founder@failuresays.com", showForm true, socials [{"label":"Twitter","href":"#"},{"label":"LinkedIn","href":"#"},{"label":"GitHub","href":"#"}] so the live pages stay correct.
+  - agent: "testing"
+    message: |
+      ✅ PAGE CMS TESTING COMPLETE - ALL 7 TESTS PASSED
+      
+      Tested the NEW page content CMS endpoints (admin password 'qwesdfcvb'):
+      
+      PUBLIC ENDPOINTS (2 tests):
+      ✅ GET /api/pages/about returns 200 with page containing:
+         - title: 'ABOUT.'
+         - eyebrow: 'Our Mission'
+         - subtitle: 'An independent editorial publication on startups, strategy, and the lessons hidden inside failure.'
+         - blocks: 6 blocks (paragraph, paragraph, heading, paragraph, paragraph, pullquote)
+         - NO _id leak detected
+      
+      ✅ GET /api/pages/contact returns 200 with page containing:
+         - title: 'CONTACT.'
+         - email: 'founder@failuresays.com'
+         - socials: 3 items (Twitter, LinkedIn, GitHub)
+         - showForm: true
+         - NO _id leak detected
+      
+      ADMIN AUTH (2 tests):
+      ✅ GET /api/admin/pages/about WITHOUT Bearer token returns 401 (auth required)
+      ✅ GET /api/admin/pages/about WITH valid Bearer token returns 200 with page
+      
+      ADMIN UPDATE & PERSISTENCE (2 tests):
+      ✅ PUT /api/admin/pages/about (auth) with body:
+         {"subtitle":"TEST SUB","blocks":[{"id":"t1","type":"paragraph","data":{"text":"hello world"}}]}
+         - Returns 200 with updated page
+         - Persistence verified: GET /api/pages/about reflects subtitle='TEST SUB' and single paragraph block
+         - Upsert operation working correctly
+      
+      ✅ PUT /api/admin/pages/contact (auth) with body:
+         {"email":"hi@x.com","socials":[{"label":"X","href":"#"}],"showForm":false}
+         - Returns 200 with updated page
+         - Persistence verified: GET /api/pages/contact reflects email='hi@x.com', 1 social, showForm=false
+         - Upsert operation working correctly
+      
+      ERROR HANDLING (1 test):
+      ✅ GET /api/pages/nope (unknown slug) returns 404
+      
+      CRITICAL CLEANUP - PAGES FULLY RESTORED:
+      ✅ About page restored to original defaults:
+         - subtitle: "An independent editorial publication on startups, strategy, and the lessons hidden inside failure."
+         - blocks: 6 original blocks (ab1-ab6) restored
+      
+      ✅ Contact page restored to original defaults:
+         - email: "founder@failuresays.com"
+         - showForm: true
+         - socials: 3 items (Twitter, LinkedIn, GitHub)
+      
+      VERIFICATION SUMMARY:
+      ✅ All public page endpoints working (about, contact)
+      ✅ Admin auth protection working (401 without token, 200 with token)
+      ✅ Admin update endpoints working with upsert logic
+      ✅ Persistence verified for both pages
+      ✅ No MongoDB ObjectId (_id) leaks in any response
+      ✅ Unknown page slug returns 404
+      ✅ Both pages FULLY RESTORED to original state after testing
+      
+      Page Content CMS is PRODUCTION-READY. No critical issues found.
   - agent: "testing"
     message: |
       ✅ ALL 25 COMPREHENSIVE CMS TESTS PASSED - NEW Article CMS Backend Fully Verified

@@ -42,6 +42,42 @@ async function ensureCategories(categories) {
   }
 }
 
+const DEFAULT_PAGES = {
+  about: {
+    slug: 'about', eyebrow: 'Our Mission', title: 'ABOUT.',
+    subtitle: 'An independent editorial publication on startups, strategy, and the lessons hidden inside failure.',
+    blocks: [
+      { id: 'ab1', type: 'paragraph', data: { text: 'Failure Says is an independent editorial publication dedicated to startups, entrepreneurship, venture capital, technology, innovation, and modern business.' } },
+      { id: 'ab2', type: 'paragraph', data: { text: 'We produce original reporting, editorial analysis, long-form features, company case studies, founder profiles, market intelligence, and data-driven insights that help readers understand the forces shaping the global startup ecosystem.' } },
+      { id: 'ab3', type: 'heading', data: { label: '01 — Philosophy', text: 'Understanding a company requires more than following its milestones.', level: 'h2', align: 'center' } },
+      { id: 'ab4', type: 'paragraph', data: { text: 'Behind every product launch, funding round, acquisition, or breakthrough lies a series of decisions, assumptions, and moments of uncertainty that rarely receive the attention they deserve. Those are the stories we choose to examine.' } },
+      { id: 'ab5', type: 'paragraph', data: { text: 'Every article is developed through research, verification, and analysis with an emphasis on accuracy, clarity, and context — connecting individual developments to the larger patterns that shape industries.' } },
+      { id: 'ab6', type: 'pullquote', data: { text: 'The future of business is written not only by the companies that succeed, but by the ideas, decisions, and lessons that shape them.', cite: '' } },
+    ],
+  },
+  contact: {
+    slug: 'contact', eyebrow: 'Say Hello', title: 'CONTACT.',
+    subtitle: 'For ideas, essays, collaborations, or just a conversation about failure and what it teaches.',
+    email: 'founder@failuresays.com',
+    socials: [
+      { label: 'Twitter', href: '#' },
+      { label: 'LinkedIn', href: '#' },
+      { label: 'GitHub', href: '#' },
+    ],
+    showForm: true,
+    blocks: [],
+  },
+}
+
+async function ensurePage(pages, slug) {
+  let doc = await pages.findOne({ slug })
+  if (!doc && DEFAULT_PAGES[slug]) {
+    doc = { id: uuid(), ...DEFAULT_PAGES[slug], updatedAt: new Date().toISOString() }
+    await pages.insertOne(doc)
+  }
+  return doc
+}
+
 // Extract plain text from structured blocks for reading-time calculation
 function blocksToText(blocks) {
   if (!Array.isArray(blocks)) return ''
@@ -64,6 +100,7 @@ async function handle(request, ctx) {
     const posts = db.collection('posts')
     const messages = db.collection('messages')
     const categories = db.collection('categories')
+    const pages = db.collection('pages')
 
     // ---------- Health ----------
     if (parts.length === 0 || path === '/') {
@@ -106,6 +143,37 @@ async function handle(request, ctx) {
       await ensureCategories(categories)
       const items = await categories.find({}).toArray()
       return json({ categories: items.map(({ _id, ...r }) => r) })
+    }
+
+    // ---------- Public: page content (about, contact, ...) ----------
+    if (parts[0] === 'pages' && parts[1] && method === 'GET') {
+      const doc = await ensurePage(pages, parts[1])
+      if (!doc) return bad('Not found', 404)
+      const { _id, ...rest } = doc
+      return json({ page: rest })
+    }
+
+    // ---------- Admin: get / update page content ----------
+    if (parts[0] === 'admin' && parts[1] === 'pages' && parts[2]) {
+      if (!isAuthed(request)) return bad('Unauthorized', 401)
+      const slug = parts[2]
+      if (method === 'GET') {
+        const doc = await ensurePage(pages, slug)
+        if (!doc) return bad('Not found', 404)
+        const { _id, ...rest } = doc
+        return json({ page: rest })
+      }
+      if (method === 'PUT') {
+        const body = await request.json().catch(() => ({}))
+        const update = { ...body }
+        delete update._id; delete update.id
+        update.slug = slug
+        update.updatedAt = new Date().toISOString()
+        await pages.updateOne({ slug }, { $set: update }, { upsert: true })
+        const doc = await pages.findOne({ slug })
+        const { _id, ...rest } = doc
+        return json({ page: rest })
+      }
     }
 
     // ---------- Public: single article by slug ----------

@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { CATEGORIES } from '@/lib/brand'
 import {
   Plus, Edit3, Trash2, Eye, LogOut, Save, ChevronLeft, Copy, Archive, Send,
-  ArrowUp, ArrowDown, LayoutDashboard, FileText, Tags, Search, Monitor, Tablet, Smartphone, Clock, X,
+  ArrowUp, ArrowDown, LayoutDashboard, FileText, FileEdit, Tags, Search, Monitor, Tablet, Smartphone, Clock, X,
 } from 'lucide-react'
 import { LogoLockup } from '@/components/logo'
 import ArticleView from '@/components/article/article-view'
@@ -91,8 +91,9 @@ function Login({ onLogin }) {
 
 /* ------------------------------- Shell with sidebar ------------------------------- */
 function Shell({ token, onLogout }) {
-  const [tab, setTab] = useState('overview') // overview | articles | categories
-  const [editing, setEditing] = useState(null) // null | {id?} 
+  const [tab, setTab] = useState('overview') // overview | articles | categories | pages
+  const [editing, setEditing] = useState(null) // null | {id?}
+  const [pageSlug, setPageSlug] = useState(null) // 'about' | 'contact' | null
   const [posts, setPosts] = useState([])
   const [cats, setCats] = useState([])
   const [loading, setLoading] = useState(true)
@@ -106,6 +107,9 @@ function Shell({ token, onLogout }) {
   }
   useEffect(() => { refresh() }, [])
 
+  if (pageSlug) {
+    return <PageEditor token={token} slug={pageSlug} onClose={() => setPageSlug(null)} />
+  }
   if (editing !== null) {
     return <Editor token={token} id={editing.id} cats={cats} posts={posts} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); refresh() }} />
   }
@@ -113,6 +117,7 @@ function Shell({ token, onLogout }) {
   const nav = [
     { key: 'overview', label: 'Overview', Icon: LayoutDashboard },
     { key: 'articles', label: 'Articles', Icon: FileText },
+    { key: 'pages', label: 'Pages', Icon: FileEdit },
     { key: 'categories', label: 'Categories & Tags', Icon: Tags },
   ]
 
@@ -138,6 +143,7 @@ function Shell({ token, onLogout }) {
         <div className="p-6">
           {tab === 'overview' && <Overview posts={posts} loading={loading} onNew={() => setEditing({})} onEdit={(id) => setEditing({ id })} goArticles={() => setTab('articles')} goCats={() => setTab('categories')} />}
           {tab === 'articles' && <Articles token={token} posts={posts} cats={cats} loading={loading} onEdit={(id) => setEditing({ id })} onNew={() => setEditing({})} refresh={refresh} />}
+          {tab === 'pages' && <Pages onEdit={setPageSlug} />}
           {tab === 'categories' && <Categories token={token} cats={cats} refresh={refresh} />}
         </div>
       </main>
@@ -283,6 +289,116 @@ function Categories({ token, cats, refresh }) {
         ))}
       </div>
       <p className="text-xs text-gray-400">Tags are added per-article in the article editor.</p>
+    </div>
+  )
+}
+
+/* ------------------------------- Pages (About / Contact) ------------------------------- */
+const PAGE_DEFS = [
+  { slug: 'about', name: 'About', desc: 'Hero + editorial content blocks.' },
+  { slug: 'contact', name: 'Contact', desc: 'Hero, email, socials, contact form + blocks.' },
+]
+function Pages({ onEdit }) {
+  return (
+    <div className="grid sm:grid-cols-2 gap-4 max-w-3xl">
+      {PAGE_DEFS.map(p => (
+        <div key={p.slug} className="bg-white border border-gray-200 p-6">
+          <div className="text-lg font-semibold">{p.name} page</div>
+          <div className="text-sm text-gray-400 mt-1">{p.desc}</div>
+          <div className="mt-5 flex gap-2">
+            <button onClick={() => onEdit(p.slug)} className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 text-sm"><Edit3 className="w-4 h-4" /> Edit</button>
+            <a href={`/${p.slug}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-gray-300 px-4 py-2 text-sm"><Eye className="w-4 h-4" /> View</a>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function PageEditor({ token, slug, onClose }) {
+  const [form, setForm] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [dirty, setDirty] = useState(false)
+  const isContact = slug === 'contact'
+
+  useEffect(() => {
+    api(`/admin/pages/${slug}`, {}, token).then(d => setForm({ eyebrow: '', title: '', subtitle: '', email: '', socials: [], showForm: true, blocks: [], ...d.page })).catch(e => toast.error(e.message))
+  }, [slug])
+
+  useEffect(() => {
+    const h = (e) => { if (dirty) { e.preventDefault(); e.returnValue = '' } }
+    window.addEventListener('beforeunload', h); return () => window.removeEventListener('beforeunload', h)
+  }, [dirty])
+
+  if (!form) return <div className="min-h-screen grid place-items-center text-gray-500">Loading…</div>
+  const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setDirty(true) }
+
+  const addBlock = (type) => { const def = BLOCK_TYPES.find(b => b.type === type); set('blocks', [...form.blocks, { id: uid(), type, data: def.make() }]) }
+  const updBlock = (bid, data) => set('blocks', form.blocks.map(b => b.id === bid ? { ...b, data } : b))
+  const moveBlock = (i, dir) => { const arr = [...form.blocks]; const j = i + dir; if (j < 0 || j >= arr.length) return;[arr[i], arr[j]] = [arr[j], arr[i]]; set('blocks', arr) }
+  const dupBlock = (i) => { const arr = [...form.blocks]; arr.splice(i + 1, 0, { ...arr[i], id: uid() }); set('blocks', arr) }
+  const delBlock = (bid) => set('blocks', form.blocks.filter(b => b.id !== bid))
+
+  const socials = form.socials || []
+  const setSocial = (i, k, v) => { const a = socials.map(x => ({ ...x })); a[i][k] = v; set('socials', a) }
+
+  async function save() {
+    setSaving(true)
+    try { await api(`/admin/pages/${slug}`, { method: 'PUT', body: JSON.stringify(form) }, token); setDirty(false); toast.success('Page saved.') }
+    catch (e) { toast.error(e.message) } finally { setSaving(false) }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center justify-between sticky top-0 z-20">
+        <div className="flex items-center gap-3">
+          <button onClick={() => { if (!dirty || confirm('Discard unsaved changes?')) onClose() }} className="p-2 hover:bg-gray-100 rounded"><ChevronLeft className="w-5 h-5" /></button>
+          <div><div className="font-semibold capitalize">{slug} page</div>{dirty && <div className="text-xs text-amber-600">Unsaved changes</div>}</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <a href={`/${slug}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-gray-300 bg-white px-3 py-2 text-sm"><Eye className="w-4 h-4" /> View</a>
+          <button disabled={saving} onClick={save} className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 text-sm"><Save className="w-4 h-4" /> Save</button>
+        </div>
+      </header>
+
+      <div className="grid lg:grid-cols-[1fr_360px]">
+        <div className="p-4 md:p-8 max-w-3xl w-full mx-auto">
+          <div className="text-[11px] uppercase tracking-[0.14em] text-gray-500 mb-2">Content blocks</div>
+          <div className="space-y-3">
+            {form.blocks.map((b, i) => (
+              <BlockCard key={b.id} block={b} index={i} total={form.blocks.length} posts={[]}
+                onChange={(data) => updBlock(b.id, data)} onMove={(dir) => moveBlock(i, dir)} onDup={() => dupBlock(i)} onDel={() => delBlock(b.id)} />
+            ))}
+          </div>
+          <AddBlock onAdd={addBlock} />
+        </div>
+
+        <aside className="border-l border-gray-200 bg-white p-5 space-y-4 lg:h-[calc(100vh-57px)] lg:overflow-y-auto lg:sticky lg:top-[57px]">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Page hero</div>
+          <Field label="Eyebrow label"><input value={form.eyebrow} onChange={e => set('eyebrow', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+          <Field label="Title"><input value={form.title} onChange={e => set('title', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+          <Field label="Subtitle"><textarea rows={3} value={form.subtitle} onChange={e => set('subtitle', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+
+          {isContact && (
+            <div className="pt-3 border-t border-gray-100 space-y-3">
+              <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Contact details</div>
+              <Field label="Email"><input value={form.email} onChange={e => set('email', e.target.value)} className="w-full border border-gray-300 px-3 py-2 text-sm" /></Field>
+              <Toggle label="Show contact form" v={form.showForm} on={() => set('showForm', !form.showForm)} />
+              <div>
+                <span className="text-xs font-medium text-gray-500 block mb-1.5">Social links</span>
+                {socials.map((s, i) => (
+                  <div key={i} className="flex gap-1 mb-1">
+                    <input value={s.label} onChange={e => setSocial(i, 'label', e.target.value)} placeholder="Label" className="w-24 border border-gray-300 px-2 py-1.5 text-sm" />
+                    <input value={s.href} onChange={e => setSocial(i, 'href', e.target.value)} placeholder="URL" className="flex-1 border border-gray-300 px-2 py-1.5 text-sm" />
+                    <button onClick={() => set('socials', socials.filter((_, x) => x !== i))} className="px-1 text-gray-400 hover:text-red-600"><X className="w-4 h-4" /></button>
+                  </div>
+                ))}
+                <button onClick={() => set('socials', [...socials, { label: '', href: '' }])} className="text-xs text-gray-500 hover:text-black">+ Add social link</button>
+              </div>
+            </div>
+          )}
+        </aside>
+      </div>
     </div>
   )
 }
