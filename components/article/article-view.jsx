@@ -30,7 +30,7 @@ function Toc({ items, mobile = false }) {
   )
   if (mobile) {
     return (
-      <div className="xl:hidden border border-rule bg-white">
+      <div className="border border-rule bg-white">
         <button onClick={() => setOpen(v => !v)} className="w-full flex items-center justify-between px-4 py-3 text-xs uppercase tracking-[0.22em]">
           <span className="inline-flex items-center gap-2"><List className="w-4 h-4 text-lime" /> In this article</span>
           {open ? <X className="w-4 h-4" /> : <span className="text-subtle">{items.length}</span>}
@@ -118,15 +118,8 @@ export default function ArticleView({ article, related = [] }) {
       {/* BODY — one central vertical axis; body always centered on the page */}
       <div className="container-editorial-wide pt-6 md:pt-8 pb-12 md:pb-16">
         <div className="relative max-w-[860px] mx-auto w-full">
-          {/* Floating desktop TOC — sits in the left gutter so the body stays centered */}
-          {showToc && (
-            <aside className="hidden 2xl:block absolute top-0 right-full mr-8 w-[210px]">
-              <Toc items={toc} />
-            </aside>
-          )}
-
-          {/* Inline / collapsible TOC on smaller screens — keeps the body centered */}
-          {showToc && <div className="2xl:hidden mb-8">{<Toc items={toc} mobile />}</div>}
+          {/* "In this article" box — inline above the body, centered, on every screen (mobile, tablet, desktop) */}
+          {showToc && <div className="mb-8">{<Toc items={toc} mobile />}</div>}
 
           {hasBlocks ? (
             <BlockRenderer blocks={article.blocks} relatedMap={relatedMap} MetricsHero={MetricsHero} />
