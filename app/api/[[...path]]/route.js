@@ -14,6 +14,44 @@ export const revalidate = 0
 function json(data, init = {}) { return NextResponse.json(data, init) }
 function bad(msg, code = 400) { return json({ error: msg }, { status: code }) }
 
+const DEFAULT_CATEGORIES = [
+  { slug: 'startup-analyses', label: 'Startup Analyses', desc: 'Breakdowns of how startups grow, stall, or break.' },
+  { slug: 'company-analyses', label: 'Company Analyses', desc: 'Deep dives into how successful companies operate and compete.' },
+  { slug: 'business-strategy', label: 'Business Strategy', desc: 'Analysis of strategic decisions and competitive positioning.' },
+  { slug: 'industry-research', label: 'Industry Research', desc: 'Market trends, dynamics, and sector-specific insights.' },
+  { slug: 'founder-perspectives', label: 'Founder Perspectives', desc: 'Leadership lessons and founder decision-making frameworks.' },
+  { slug: 'venture-capital', label: 'Venture Capital', desc: 'Investment trends, funding rounds, and VC ecosystem coverage.' },
+  { slug: 'lessons-from-failure', label: 'Lessons from Failure', desc: 'What went wrong, why it happened, and what we can learn.' },
+  { slug: 'blog', label: 'Blog', desc: 'Essays on business, innovation, and entrepreneurial thinking.' },
+]
+
+// Visibility filter for public reads: published, or scheduled whose time passed, or legacy published:true
+function visibilityFilter() {
+  const now = new Date().toISOString()
+  return { $or: [
+    { status: 'published' },
+    { status: 'scheduled', scheduledAt: { $lte: now } },
+    { status: { $exists: false }, published: true },
+  ] }
+}
+
+async function ensureCategories(categories) {
+  const count = await categories.countDocuments()
+  if (count === 0) {
+    await categories.insertMany(DEFAULT_CATEGORIES.map(c => ({ id: uuid(), ...c })))
+  }
+}
+
+// Extract plain text from structured blocks for reading-time calculation
+function blocksToText(blocks) {
+  if (!Array.isArray(blocks)) return ''
+  return blocks.map(b => {
+    const d = b?.data || {}
+    return [d.text, d.title, d.label, d.caption, ...(Array.isArray(d.items) ? d.items : [])]
+      .filter(Boolean).join(' ')
+  }).join(' ')
+}
+
 async function handle(request, ctx) {
   const method = request.method
   const resolved = await (ctx?.params || Promise.resolve({}))
@@ -25,6 +63,7 @@ async function handle(request, ctx) {
     const db = await getDb()
     const posts = db.collection('posts')
     const messages = db.collection('messages')
+    const categories = db.collection('categories')
 
     // ---------- Health ----------
     if (parts.length === 0 || path === '/') {
@@ -50,20 +89,29 @@ async function handle(request, ctx) {
       const category = url.searchParams.get('category')
       const tag = url.searchParams.get('tag')
       const featured = url.searchParams.get('featured')
+      const ids = url.searchParams.get('ids')
       const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10), 100)
-      const q = { published: true }
+      const q = { ...visibilityFilter() }
       if (category) q.category = category
       if (tag) q.tags = tag
       if (featured === '1') q.featured = true
-      const items = await posts.find(q, { projection: { content: 0 } }).sort({ publishedAt: -1, createdAt: -1 }).limit(limit).toArray()
+      if (ids) q.id = { $in: ids.split(',').map(s => s.trim()).filter(Boolean) }
+      const items = await posts.find(q, { projection: { content: 0, blocks: 0 } }).sort({ publishedAt: -1, createdAt: -1 }).limit(limit).toArray()
       const clean = items.map(({ _id, ...rest }) => rest)
       return json({ articles: clean })
+    }
+
+    // ---------- Public: categories ----------
+    if (path === '/categories' && method === 'GET') {
+      await ensureCategories(categories)
+      const items = await categories.find({}).toArray()
+      return json({ categories: items.map(({ _id, ...r }) => r) })
     }
 
     // ---------- Public: single article by slug ----------
     if (parts[0] === 'articles' && parts[1] && method === 'GET') {
       const slug = parts[1]
-      const item = await posts.findOne({ slug, published: true })
+      const item = await posts.findOne({ slug, ...visibilityFilter() })
       if (!item) return bad('Not found', 404)
       const { _id, ...rest } = item
       return json({ article: rest })
@@ -97,7 +145,7 @@ async function handle(request, ctx) {
     // ---------- Admin: list all posts ----------
     if (path === '/admin/posts' && method === 'GET') {
       if (!isAuthed(request)) return bad('Unauthorized', 401)
-      const items = await posts.find({}, { projection: { content: 0 } }).sort({ createdAt: -1 }).toArray()
+      const items = await posts.find({}, { projection: { content: 0, blocks: 0 } }).sort({ createdAt: -1 }).toArray()
       return json({ posts: items.map(({ _id, ...r }) => r) })
     }
 
@@ -105,22 +153,49 @@ async function handle(request, ctx) {
     if (path === '/admin/posts' && method === 'POST') {
       if (!isAuthed(request)) return bad('Unauthorized', 401)
       const body = await request.json().catch(() => ({}))
-      const { title, category, tags = [], coverImage = '', excerpt = '', content = '', featured = false, published = false, seo = {}, slug: providedSlug } = body
+      const {
+        title, category, tags = [], coverImage = '', coverImageAlt = '', excerpt = '', subtitle = '',
+        articleLabel = '', content = '', blocks = [], featured = false, seo = {}, slug: providedSlug,
+        author = {}, relatedIds = [], showToc = true, showShare = true,
+        status = 'draft', scheduledAt = null, socialImage = '', canonicalUrl = '',
+      } = body
       if (!title || !category) return bad('title and category required')
       let slug = (providedSlug ? slugify(providedSlug) : slugify(title))
-      // ensure unique slug
       let base = slug, i = 1
       while (await posts.findOne({ slug })) { slug = `${base}-${i++}` }
       const now = new Date().toISOString()
+      const isPub = status === 'published'
       const doc = {
-        id: uuid(), slug, title, category, tags: Array.isArray(tags) ? tags : String(tags).split(',').map(s=>s.trim()).filter(Boolean),
-        coverImage, excerpt, content, featured: !!featured, published: !!published, seo,
-        readingTime: readingTime(content),
-        createdAt: now, updatedAt: now, publishedAt: published ? now : null,
+        id: uuid(), slug, title, subtitle, articleLabel, category,
+        tags: Array.isArray(tags) ? tags : String(tags).split(',').map(s=>s.trim()).filter(Boolean),
+        coverImage, coverImageAlt, excerpt, content, blocks: Array.isArray(blocks) ? blocks : [],
+        author: { name: author.name || '', photo: author.photo || '', bio: author.bio || '' },
+        relatedIds: Array.isArray(relatedIds) ? relatedIds : [],
+        showToc: showToc !== false, showShare: showShare !== false,
+        featured: !!featured, seo: { ...seo, socialImage, canonicalUrl },
+        status, scheduledAt: status === 'scheduled' ? scheduledAt : null,
+        published: isPub,
+        readingTime: readingTime(content + ' ' + blocksToText(blocks)),
+        createdAt: now, updatedAt: now, publishedAt: isPub ? now : null,
       }
       await posts.insertOne(doc)
       const { _id, ...rest } = doc
       return json({ post: rest })
+    }
+
+    // ---------- Admin: duplicate post ----------
+    if (parts[0] === 'admin' && parts[1] === 'posts' && parts[2] && parts[3] === 'duplicate' && method === 'POST') {
+      if (!isAuthed(request)) return bad('Unauthorized', 401)
+      const src = await posts.findOne({ id: parts[2] })
+      if (!src) return bad('Not found', 404)
+      const now = new Date().toISOString()
+      let slug = `${src.slug}-copy`, base = slug, i = 1
+      while (await posts.findOne({ slug })) { slug = `${base}-${i++}` }
+      const { _id, id: _oldId, ...rest } = src
+      const doc = { ...rest, id: uuid(), slug, title: `${src.title} (Copy)`, status: 'draft', published: false, publishedAt: null, scheduledAt: null, createdAt: now, updatedAt: now }
+      await posts.insertOne(doc)
+      const { _id: __, ...clean } = doc
+      return json({ post: clean })
     }
 
     // ---------- Admin: get / update / delete single post ----------
@@ -138,14 +213,28 @@ async function handle(request, ctx) {
         const current = await posts.findOne({ id })
         if (!current) return bad('Not found', 404)
         const update = { ...body }
+        delete update._id; delete update.id; delete update.createdAt
         // recompute derived fields
-        if (update.content !== undefined) update.readingTime = readingTime(update.content)
+        if (update.content !== undefined || update.blocks !== undefined) {
+          const c = update.content !== undefined ? update.content : (current.content || '')
+          const b = update.blocks !== undefined ? update.blocks : (current.blocks || [])
+          update.readingTime = readingTime(c + ' ' + blocksToText(b))
+        }
         if (update.slug) update.slug = slugify(update.slug)
         if (update.tags && !Array.isArray(update.tags)) update.tags = String(update.tags).split(',').map(s=>s.trim()).filter(Boolean)
         const now = new Date().toISOString()
         update.updatedAt = now
-        if (update.published === true && !current.publishedAt) update.publishedAt = now
-        if (update.published === false) update.publishedAt = null
+        // status <-> published/publishedAt sync
+        if (update.status !== undefined) {
+          update.published = update.status === 'published'
+          if (update.status === 'published' && !current.publishedAt) update.publishedAt = now
+          if (update.status === 'draft' || update.status === 'archived') update.publishedAt = update.status === 'archived' ? current.publishedAt : null
+          if (update.status !== 'scheduled') update.scheduledAt = update.scheduledAt || null
+        } else if (update.published !== undefined) {
+          update.status = update.published ? 'published' : 'draft'
+          if (update.published === true && !current.publishedAt) update.publishedAt = now
+          if (update.published === false) update.publishedAt = null
+        }
         // avoid slug collision
         if (update.slug && update.slug !== current.slug) {
           const clash = await posts.findOne({ slug: update.slug, id: { $ne: id } })
@@ -158,6 +247,45 @@ async function handle(request, ctx) {
       }
       if (method === 'DELETE') {
         await posts.deleteOne({ id })
+        return json({ ok: true })
+      }
+    }
+
+    // ---------- Admin: categories CRUD ----------
+    if (path === '/admin/categories' && method === 'GET') {
+      if (!isAuthed(request)) return bad('Unauthorized', 401)
+      await ensureCategories(categories)
+      const items = await categories.find({}).toArray()
+      return json({ categories: items.map(({ _id, ...r }) => r) })
+    }
+    if (path === '/admin/categories' && method === 'POST') {
+      if (!isAuthed(request)) return bad('Unauthorized', 401)
+      const body = await request.json().catch(() => ({}))
+      const { label, desc = '' } = body
+      if (!label) return bad('label required')
+      let slug = slugify(body.slug || label), base = slug, i = 1
+      while (await categories.findOne({ slug })) { slug = `${base}-${i++}` }
+      const doc = { id: uuid(), slug, label, desc }
+      await categories.insertOne(doc)
+      const { _id, ...rest } = doc
+      return json({ category: rest })
+    }
+    if (parts[0] === 'admin' && parts[1] === 'categories' && parts[2]) {
+      if (!isAuthed(request)) return bad('Unauthorized', 401)
+      const cid = parts[2]
+      if (method === 'PUT') {
+        const body = await request.json().catch(() => ({}))
+        const upd = {}
+        if (body.label !== undefined) upd.label = body.label
+        if (body.desc !== undefined) upd.desc = body.desc
+        await categories.updateOne({ id: cid }, { $set: upd })
+        const item = await categories.findOne({ id: cid })
+        if (!item) return bad('Not found', 404)
+        const { _id, ...rest } = item
+        return json({ category: rest })
+      }
+      if (method === 'DELETE') {
+        await categories.deleteOne({ id: cid })
         return json({ ok: true })
       }
     }

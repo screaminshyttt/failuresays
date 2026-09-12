@@ -452,3 +452,187 @@ agent_communication:
       Note: /admin page has unrelated ERR_CONNECTION_RESET issue (out of scope for this fix).
       Note: /api/* endpoints return 500 due to pre-existing MongoDB env issue (out of scope).
 
+
+#====================================================================================================
+# ARTICLE CMS UPGRADE (Phase 1) - Block editor, statuses, scheduling, categories
+#====================================================================================================
+current_focus_problem_statement: |
+  Upgraded FailureSays into an article CMS. Restored missing /app/.env (local MongoDB, DB_NAME=failuresays,
+  ADMIN_PASSWORD=qwesdfcvb). Extended posts schema with: blocks[] (structured content blocks), subtitle,
+  articleLabel, author{name,photo,bio}, status(draft/scheduled/published/archived), scheduledAt, seo{title,
+  description,socialImage,canonicalUrl}, relatedIds[], coverImageAlt, showToc, showShare. Added categories
+  collection (auto-seeded 8 defaults) with admin CRUD, a duplicate endpoint, and status/scheduling visibility.
+
+cms_backend:
+  - task: "Categories: GET /api/categories seeds & returns defaults; admin CRUD /api/admin/categories"
+    implemented: true
+    working: true
+    file: "app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "GET /api/categories auto-seeds 8 default categories when empty. Admin CRUD requires Bearer token: POST (create with unique slug), PUT (rename label/desc), DELETE."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - GET /api/categories returns 8 default categories (startup-analyses, company-analyses, business-strategy, industry-research, founder-perspectives, venture-capital, lessons-from-failure, blog). POST /api/admin/categories creates 'Growth Strategy' with unique slug 'growth-strategy'. PUT /api/admin/categories/:id successfully renames category. DELETE /api/admin/categories/:id removes category. No ObjectId leaks detected (all use UUID)."
+  - task: "Create post with full CMS fields + blocks[]; readingTime from blocks"
+    implemented: true
+    working: true
+    file: "app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "POST /api/admin/posts accepts title, category, subtitle, articleLabel, blocks[], author{}, seo{}, relatedIds[], showToc/showShare, status. readingTime computed from content + block text. status='draft' default -> published:false, publishedAt:null."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - POST /api/admin/posts creates post with full CMS fields: title, category, subtitle, articleLabel, author{name,photo,bio}, seo{title,description,socialImage,canonicalUrl}, relatedIds[], showToc, showShare, status='draft', and blocks[] (heading, paragraph, metrics with line/kpis/bars/notes). Auto-generated slug working. readingTime computed from blocks (1 min). Draft defaults: status=draft, published=false, publishedAt=null. All 3 blocks persisted correctly. Validation working: missing title or category returns 400. GET /api/admin/posts/:id returns full post including blocks."
+  - task: "Status transitions & scheduling visibility (draft/scheduled/published/archived)"
+    implemented: true
+    working: true
+    file: "app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "PUT /api/admin/posts/:id status changes sync published/publishedAt. Public /api/articles and /api/articles/:slug use visibilityFilter: show status=published, OR status=scheduled with scheduledAt<=now, OR legacy published:true. Draft/archived and future-scheduled must NOT be publicly visible."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - All status transitions working correctly: (1) draft->published sets publishedAt timestamp and published=true, post becomes visible in GET /api/articles and GET /api/articles/:slug. (2) published->draft clears publishedAt to null and published=false, post disappears from public endpoints. (3) status=archived hides post from public. (4) status=scheduled with FUTURE scheduledAt hides post from public. (5) status=scheduled with PAST scheduledAt makes post visible publicly. visibilityFilter working correctly. Public list excludes content/blocks, single article includes blocks."
+  - task: "Duplicate post endpoint"
+    implemented: true
+    working: true
+    file: "app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "POST /api/admin/posts/:id/duplicate clones as new draft with '-copy' slug, status=draft, publishedAt=null."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - POST /api/admin/posts/:id/duplicate creates new draft copy with slug ending in '-copy' (unique slug generation working). Duplicate has: new UUID, status=draft, published=false, publishedAt=null, scheduledAt=null. All original content and blocks copied correctly."
+  - task: "Fetch articles by ids (?ids=) for related articles"
+    implemented: true
+    working: true
+    file: "app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "GET /api/articles?ids=id1,id2 returns visible articles with matching ids (content/blocks excluded)."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - GET /api/articles?ids=id1,id2 returns only visible articles matching the provided IDs. content and blocks fields correctly excluded from response. Only returns articles that pass visibilityFilter (published or past-scheduled)."
+
+cms_test_plan:
+  current_focus:
+    - "Categories: GET /api/categories seeds & returns defaults; admin CRUD /api/admin/categories"
+    - "Create post with full CMS fields + blocks[]; readingTime from blocks"
+    - "Status transitions & scheduling visibility (draft/scheduled/published/archived)"
+    - "Duplicate post endpoint"
+    - "Fetch articles by ids (?ids=) for related articles"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication_cms:
+  - agent: "main"
+    message: |
+      Please test the NEW article CMS backend (base URL relative /api, admin password 'qwesdfcvb').
+      1) POST /api/admin/login {"password":"qwesdfcvb"} -> token. Wrong pw -> 401.
+      2) GET /api/categories -> array of 8 seeded categories (startup-analyses ... blog).
+      3) GET /api/admin/categories (auth) works; POST create {"label":"Growth Strategy"} -> unique slug; PUT rename; DELETE.
+      4) POST /api/admin/posts (auth) with title, category, subtitle, articleLabel, author{name,photo,bio},
+         seo{title,description,socialImage,canonicalUrl}, relatedIds:[], showToc, showShare, status:"draft",
+         and blocks:[{id,type:"heading",data:{label,text,level:"h2",align:"center"}},{id,type:"paragraph",data:{text}},
+         {id,type:"metrics",data:{metric,metricLabel,changePct,line:[..],kpis:[..],bars:[..],notes:[..]}}].
+         Expect: slug auto, readingTime>=1, status draft, published false, publishedAt null, blocks persisted.
+      5) GET /api/admin/posts lists it (content & blocks excluded). GET /api/admin/posts/:id returns full incl blocks.
+      6) Status transitions via PUT: draft->published (publishedAt set, published true, visible in /api/articles &
+         /api/articles/:slug); published->draft (publishedAt cleared, NOT visible); ->archived (NOT visible);
+         ->scheduled with future scheduledAt (NOT visible); ->scheduled with PAST scheduledAt (visible).
+      7) POST /api/admin/posts/:id/duplicate -> new draft with '-copy' slug.
+      8) GET /api/articles?ids=<id1>,<id2> returns those articles.
+      9) Verify NO _id (ObjectId) leaks anywhere; all ids are UUID. Slug collision on PUT returns 409.
+      Clean up any test data at the end.
+  - agent: "testing"
+    message: |
+      ✅ ALL 25 COMPREHENSIVE CMS TESTS PASSED - NEW Article CMS Backend Fully Verified
+      
+      COMPLETE TEST COVERAGE (25/25 tests passed):
+      
+      1. AUTH (4 tests):
+         ✅ POST /api/admin/login with correct password returns 200 + JWT
+         ✅ Wrong password returns 401
+         ✅ Missing password returns 400
+         ✅ GET /api/admin/verify with Bearer token returns {ok:true}, without returns {ok:false}
+      
+      2. CATEGORIES (3 tests):
+         ✅ GET /api/categories auto-seeds 8 default categories (startup-analyses, company-analyses, business-strategy, industry-research, founder-perspectives, venture-capital, lessons-from-failure, blog)
+         ✅ POST /api/admin/categories creates "Growth Strategy" with unique slug "growth-strategy"
+         ✅ PUT /api/admin/categories/:id renames category successfully
+         ✅ DELETE /api/admin/categories/:id removes category
+      
+      3. CREATE POST WITH BLOCKS (3 tests):
+         ✅ POST /api/admin/posts with full CMS fields: title, category, subtitle, articleLabel, author{name,photo,bio}, seo{title,description,socialImage,canonicalUrl}, relatedIds[], showToc, showShare, status:"draft"
+         ✅ blocks[] persisted: heading (label,text,level,align), paragraph (text), metrics (metric,metricLabel,changePct,line[],kpis[],bars[],notes[])
+         ✅ Auto-slug generation working
+         ✅ readingTime computed from blocks (1 min)
+         ✅ Draft defaults: status=draft, published=false, publishedAt=null
+         ✅ Validation: missing title or category returns 400
+         ✅ GET /api/admin/posts/:id returns full post including blocks
+      
+      4. STATUS TRANSITIONS & VISIBILITY (5 tests):
+         ✅ draft->published: sets publishedAt timestamp, published=true, visible in GET /api/articles and GET /api/articles/:slug
+         ✅ published->draft: clears publishedAt to null, published=false, NOT visible in public endpoints
+         ✅ status=archived: hidden from public
+         ✅ status=scheduled with FUTURE scheduledAt: hidden from public
+         ✅ status=scheduled with PAST scheduledAt: visible publicly
+         ✅ Public list projection: content and blocks excluded
+         ✅ Single article: blocks included
+      
+      5. DUPLICATE POST (1 test):
+         ✅ POST /api/admin/posts/:id/duplicate creates new draft with '-copy' slug (unique), new UUID, status=draft, publishedAt=null
+      
+      6. RELATED ARTICLES (1 test):
+         ✅ GET /api/articles?ids=id1,id2 returns only visible articles with matching IDs, content/blocks excluded
+      
+      7. DATA INTEGRITY (2 tests):
+         ✅ NO ObjectId (_id) leaks in any response - all use UUID
+         ✅ Slug collision on PUT returns 409
+      
+      8. REGRESSION (3 tests):
+         ✅ GET /api/search still working, content excluded
+         ✅ POST /api/contact still working (name/email/message required)
+         ✅ GET /api/admin/messages still working (auth required)
+      
+      9. CLEANUP (2 tests):
+         ✅ All test categories deleted
+         ✅ All test posts deleted (4 posts)
+      
+      CRITICAL VERIFICATIONS:
+      ✅ All 8 default categories seeded correctly
+      ✅ Blocks[] structure fully supported (heading, paragraph, metrics with complex data)
+      ✅ readingTime computed from blocks text
+      ✅ Status transitions sync published/publishedAt correctly
+      ✅ visibilityFilter working: published + past-scheduled visible, draft/archived/future-scheduled hidden
+      ✅ Duplicate creates proper draft copy with unique slug
+      ✅ Related articles fetch by IDs working
+      ✅ No MongoDB ObjectId leaks anywhere
+      ✅ Slug collision prevention working (409)
+      ✅ All existing endpoints still working (regression passed)
+      
+      NEW Article CMS backend is PRODUCTION-READY. All test data cleaned up.
+
+
