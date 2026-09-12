@@ -33,11 +33,6 @@ export default function Home() {
         <div className="container-editorial pt-4 md:pt-6 pb-24 md:pb-32">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 relative">
-              {/* left vertical signal label */}
-              <div className="hidden xl:flex flex-col items-start gap-2 absolute -left-20 top-1/2 -translate-y-1/2 text-[10px] uppercase tracking-[0.3em] text-subtle">
-                <span className="w-7 h-[2px] bg-lime mb-1" />
-                <span>Ideas</span><span>from</span><span>real</span><span>failures</span>
-              </div>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
                 <div className="eyebrow-accent">FailureSays &middot; Est. 2025</div>
                 <p className="mt-6 text-muted text-lg max-w-lg">Startup thinking, business analysis, and lessons hidden inside failure.</p>
@@ -54,11 +49,6 @@ export default function Home() {
             </div>
             <div className="lg:col-span-5 relative flex justify-center">
               <AnimatedMark size={520} />
-              {/* right signal label */}
-              <div className="hidden lg:flex flex-col gap-1 absolute right-0 xl:-right-6 top-1/2 -translate-y-1/2 text-[11px] uppercase tracking-[0.3em] text-subtle">
-                <span className="w-7 h-[2px] bg-lime mb-1" />
-                <span>Fail</span><span>Learn</span><span>Repeat</span>
-              </div>
             </div>
           </div>
         </div>
