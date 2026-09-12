@@ -102,6 +102,47 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
+user_problem_statement: "Change the admin panel password to 'qwesdfcvb'. User also reported 'MONGO_URL is not set' error when logging in on admin page."
+
+backend:
+  - task: "Admin login with new password + Mongo-backed endpoints"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Created /app/.env with MONGO_URL=mongodb://localhost:27017, DB_NAME=failuresays, JWT_SECRET, ADMIN_PASSWORD=qwesdfcvb and NEXT_PUBLIC_BASE_URL. Ran yarn install (deps were missing) and restarted nextjs. Verified via curl that POST /api/admin/login with 'qwesdfcvb' returns a JWT and wrong password returns 401."
+        - working: true
+          agent: "testing"
+          comment: "All 11 backend tests passed: login (correct/wrong/missing password), verify (with/without token), public /api/articles, admin posts CRUD, and admin messages. 'MONGO_URL is not set' error is RESOLVED."
+        - working: true
+          agent: "testing"
+          comment: "✅ ALL 11 TESTS PASSED - Admin password change and Mongo connectivity verified successfully. (1) POST /api/admin/login with password 'qwesdfcvb' returns 200 with JWT token. (2) Wrong password returns 401 'Invalid password'. (3) No body returns 400 'Password required'. (4) GET /api/admin/verify with Bearer token returns {ok:true}. (5) Without token returns {ok:false}. (6) GET /api/articles returns 200 with articles array - CRITICAL: NO 'MONGO_URL is not set' error found. (7-11) All admin CRUD endpoints working: POST /api/admin/posts creates post, GET /api/admin/posts lists posts, PUT /api/admin/posts/:id updates post with publishedAt logic, GET /api/admin/messages retrieves messages, DELETE /api/admin/posts/:id deletes post. All Mongo operations successful. Test post created, updated, and cleaned up successfully. The 'MONGO_URL is not set' error reported by user is RESOLVED."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Admin login with new password + Mongo-backed endpoints"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "main"
+      message: "Please verify the admin flow end-to-end via API: (1) POST /api/admin/login with body {\"password\":\"qwesdfcvb\"} returns 200 and a token; (2) POST /api/admin/login with wrong password returns 401; (3) GET /api/admin/verify with Bearer token returns {ok:true}; (4) confirm no 'MONGO_URL is not set' error by hitting a Mongo-backed endpoint like GET /api/articles (should return 200 with an array, empty is fine); (5) create a post via authenticated POST /api/posts (or the correct admin route in route.js) if available, then list/get/delete. Use base URL from NEXT_PUBLIC_BASE_URL in /app/.env. Do NOT change env values."
+    - agent: "testing"
+      message: "✅ BACKEND TESTING COMPLETE - ALL 11 TESTS PASSED. Admin password 'qwesdfcvb' is working correctly. The 'MONGO_URL is not set' error is RESOLVED - all Mongo-backed endpoints (GET /api/articles, POST /api/admin/posts, GET /api/admin/posts, PUT /api/admin/posts/:id, GET /api/admin/messages, DELETE /api/admin/posts/:id) are functioning correctly. Full CRUD lifecycle tested: created test post, updated it (published=true, publishedAt set), listed posts, retrieved messages, and deleted test post. All authentication flows working (login with correct/wrong password, verify with/without token). No critical issues found. Backend is production-ready."
+
+
 user_problem_statement: |
   Build "FailureSays" - a premium editorial website with a built-in CMS at /admin.
   It is a personal brand + knowledge platform for founders. Content categories:
