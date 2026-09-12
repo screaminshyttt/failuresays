@@ -15,10 +15,10 @@ export default function BlogPage() {
   const rest = all.filter(a => a.id !== featured?.id)
 
   return (
-    <div className="bg-paper">
+    <div className="bg-transparent">
       {/* HERO */}
       <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14 text-center">
-        <div className="eyebrow">The Journal</div>
+        <div className="eyebrow-accent">The Journal</div>
         <h1 className="page-heading mt-4">BLOG.</h1>
         <p className="mt-8 mx-auto max-w-3xl text-lg md:text-xl text-muted leading-relaxed">
           Essays on startups, strategy, philosophy, and the founder mind.
@@ -32,10 +32,10 @@ export default function BlogPage() {
               {featured.coverImage && /* eslint-disable-next-line @next/next/no-img-element */ <img src={featured.coverImage} alt={featured.title} className="w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-105" />}
             </div>
             <div className="p-8 md:p-14 flex flex-col justify-center">
-              <div className="eyebrow">Featured essay</div>
+              <div className="eyebrow-accent">Featured essay</div>
               <h2 className="display mt-4 text-4xl md:text-6xl leading-[0.95]">{featured.title}</h2>
               {featured.excerpt && <p className="mt-6 text-muted text-lg">{featured.excerpt}</p>}
-              <div className="mt-8 text-xs uppercase tracking-[0.24em] text-subtle">Read essay &nbsp;→</div>
+              <div className="mt-8 text-xs uppercase tracking-[0.24em] text-ink">Read essay <span className="text-lime">&rarr;</span></div>
             </div>
           </Link>
         </section>

@@ -27,14 +27,19 @@ export default function Home() {
   const { all, by, loading } = useArticles()
 
   return (
-    <div className="bg-paper">
+    <div className="bg-transparent">
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="container-editorial pt-4 md:pt-6 pb-24 md:pb-32">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-7">
+            <div className="lg:col-span-7 relative">
+              {/* left vertical signal label */}
+              <div className="hidden xl:flex flex-col items-start gap-2 absolute -left-20 top-1/2 -translate-y-1/2 text-[10px] uppercase tracking-[0.3em] text-subtle">
+                <span className="w-7 h-[2px] bg-lime mb-1" />
+                <span>Ideas</span><span>from</span><span>real</span><span>failures</span>
+              </div>
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-                <div className="eyebrow">FailureSays &middot; Est. 2025</div>
+                <div className="eyebrow-accent">FailureSays &middot; Est. 2025</div>
                 <p className="mt-6 text-muted text-lg max-w-lg">Startup thinking, business analysis, and lessons hidden inside failure.</p>
                 <h1 className="display mt-8 text-[40px] xs:text-[48px] sm:text-[64px] md:text-[84px] lg:text-[96px] leading-[1.02] md:leading-[1.02] break-words">
                   The harder you try<br />
@@ -47,8 +52,13 @@ export default function Home() {
                 </div>
               </motion.div>
             </div>
-            <div className="lg:col-span-5 flex justify-center">
+            <div className="lg:col-span-5 relative flex justify-center">
               <AnimatedMark size={520} />
+              {/* right signal label */}
+              <div className="hidden lg:flex flex-col gap-1 absolute right-0 xl:-right-6 top-1/2 -translate-y-1/2 text-[11px] uppercase tracking-[0.3em] text-subtle">
+                <span className="w-7 h-[2px] bg-lime mb-1" />
+                <span>Fail</span><span>Learn</span><span>Repeat</span>
+              </div>
             </div>
           </div>
         </div>
@@ -98,18 +108,18 @@ export default function Home() {
 function SectionShell({ eyebrow, title, href, description, children, tone = 'paper' }) {
   const bg =
     tone === 'cream' ? 'bg-cream' :
-    tone === 'stone' ? 'bg-[#EDE9DC]' :
-    tone === 'grey' ? 'bg-[#E4E1D5]' :
-    'bg-paper'
+    tone === 'stone' ? 'bg-white/60' :
+    tone === 'grey' ? 'bg-transparent' :
+    'bg-transparent'
   return (
-    <section className={`${bg} py-24`}>
+    <section className={`${bg} py-24 border-t border-rule`}>
       <div className="container-editorial">
         <FadeUp>
-          <div className="text-center">
-            <div className="eyebrow">{eyebrow}</div>
+          <div className="text-center flex flex-col items-center">
+            <div className="section-index"><b>{eyebrow}</b></div>
             <h2 className="display mt-4 text-5xl md:text-7xl">{title}</h2>
             {description && <p className="mt-4 mx-auto max-w-xl text-muted">{description}</p>}
-            {href && <Link href={href} className="inline-block mt-6 text-xs uppercase tracking-[0.24em] link-underline">View all →</Link>}
+            {href && <Link href={href} className="inline-flex items-center gap-1.5 mt-6 text-xs uppercase tracking-[0.24em] link-underline">View all <span className="text-lime">&rarr;</span></Link>}
           </div>
         </FadeUp>
         <div className="mt-14">{children}</div>
@@ -146,11 +156,9 @@ function CardGrid({ articles, loading, cols = 3 }) {
 function LatestGrid({ articles, loading }) {
   if (loading) return <div className="grid md:grid-cols-3 gap-6"><Skeletons count={3} /></div>
   if (!articles.length) return <EmptyState />
-  const [first, ...rest] = articles
   return (
     <div className="grid md:grid-cols-3 gap-6">
-      <div className="md:col-span-1"><ArticleCard article={first} dark /></div>
-      {rest.slice(0, 5).map(a => <ArticleCard key={a.id} article={a} />)}
+      {articles.slice(0, 3).map(a => <ArticleCard key={a.id} article={a} variant="row" />)}
     </div>
   )
 }
@@ -164,10 +172,10 @@ function Skeletons({ count = 3, dark = false, large = false }) {
 function MarqueeBanner() {
   const items = ['Company Analyses', 'Business Strategy', 'Industry Research', 'Founder Perspectives', 'Venture Capital', 'Lessons from Failure', 'Editorial', 'Innovation']
   return (
-    <div className="border-y border-rule bg-cream overflow-hidden">
+    <div className="border-y border-rule bg-white/70 overflow-hidden">
       <div className="flex whitespace-nowrap animate-marquee py-5 text-[13px] uppercase tracking-[0.28em] text-muted">
         {[...items, ...items, ...items].map((t, i) => (
-          <span key={i} className="mx-10 flex items-center gap-10"><span className="w-1 h-1 rounded-full bg-muted" />{t}</span>
+          <span key={i} className="mx-10 flex items-center gap-10"><span className="w-1.5 h-1.5 rounded-full bg-lime" />{t}</span>
         ))}
       </div>
     </div>

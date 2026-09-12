@@ -47,7 +47,7 @@ function Stacked({ lines }) {
 
 export default function AboutPage() {
   return (
-    <div className="bg-paper">
+    <div className="bg-transparent">
       {/* ABOUT */}
       <EditorialSection heading="ABOUT." first>
         <p>Failure Says is an independent editorial publication dedicated to startups, entrepreneurship, venture capital, technology, innovation, and modern business.</p>

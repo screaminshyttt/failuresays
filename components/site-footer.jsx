@@ -38,25 +38,25 @@ export default function SiteFooter() {
             <p className="mt-8 text-paper/70 text-lg max-w-md leading-relaxed">
               A premium editorial publication for founders, operators, investors, and lifelong learners.
             </p>
-            <blockquote className="mt-10 pl-4 border-l border-paper/30 text-paper/90 italic max-w-md">
+            <blockquote className="mt-10 pl-4 border-l-2 border-lime text-paper/90 italic max-w-md">
               &ldquo;The harder you try to avoid failure, the longer it owns you.&rdquo;
             </blockquote>
           </div>
           <div className="md:col-span-3">
             <div className="eyebrow text-paper/60">Explore</div>
             <ul className="mt-5 space-y-3 text-sm">
-              <li><Link className="hover:text-white" href="/">Home</Link></li>
-              <li><Link className="hover:text-white" href="/wisdom">Wisdom</Link></li>
-              <li><Link className="hover:text-white" href="/blog">Blog</Link></li>
-              <li><Link className="hover:text-white" href="/about">About</Link></li>
-              <li><Link className="hover:text-white" href="/contact">Contact</Link></li>
+              <li><Link className="hover:text-lime" href="/">Home</Link></li>
+              <li><Link className="hover:text-lime" href="/wisdom">Wisdom</Link></li>
+              <li><Link className="hover:text-lime" href="/blog">Blog</Link></li>
+              <li><Link className="hover:text-lime" href="/about">About</Link></li>
+              <li><Link className="hover:text-lime" href="/contact">Contact</Link></li>
             </ul>
           </div>
           <div className="md:col-span-4">
             <div className="eyebrow text-paper/60">Categories</div>
             <ul className="mt-5 space-y-3 text-sm">
               {CATEGORIES.filter(c => c.slug !== 'blog').map(c => (
-                <li key={c.slug}><Link className="hover:text-white" href={`/wisdom/${c.slug}`}>{c.label}</Link></li>
+                <li key={c.slug}><Link className="hover:text-lime" href={`/wisdom/${c.slug}`}>{c.label}</Link></li>
               ))}
             </ul>
           </div>

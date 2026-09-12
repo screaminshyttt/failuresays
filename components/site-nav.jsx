@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
@@ -7,7 +8,24 @@ import { CATEGORIES, NAV_MARK, NAV_WORDMARK } from '@/lib/brand'
 
 const wisdomItems = CATEGORIES.filter(c => c.slug !== 'blog')
 
+function NavLink({ href, active, children }) {
+  return (
+    <Link href={href} className="relative py-1">
+      <span className={active ? 'text-white' : 'text-paper/80 hover:text-white transition-colors'}>{children}</span>
+      {active && (
+        <motion.span
+          layoutId="nav-underline"
+          className="absolute left-0 -bottom-1 h-[3px] w-full bg-lime"
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        />
+      )}
+    </Link>
+  )
+}
+
 export default function SiteNav() {
+  const pathname = usePathname() || '/'
+  const isActive = (href) => href === '/' ? pathname === '/' : pathname.startsWith(href)
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [wisdomOpen, setWisdomOpen] = useState(false)
@@ -46,13 +64,13 @@ export default function SiteNav() {
 
         {/* Menu - absolutely centered with respect to the WHOLE bar (desktop only) */}
         <nav className="hidden lg:flex items-center gap-7 xl:gap-9 text-[12px] xl:text-[13px] uppercase tracking-[0.2em] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <Link href="/" className="link-underline">Home</Link>
+          <NavLink href="/" active={isActive('/')}>Home</NavLink>
           <div
             className="relative"
             onMouseEnter={() => setWisdomOpen(true)}
             onMouseLeave={() => setWisdomOpen(false)}
           >
-            <Link href="/wisdom" className="link-underline">Wisdom</Link>
+            <NavLink href="/wisdom" active={isActive('/wisdom')}>Wisdom</NavLink>
             <AnimatePresence>
               {wisdomOpen && (
                 <motion.div
@@ -67,7 +85,7 @@ export default function SiteNav() {
                       <Link
                         key={c.slug}
                         href={`/wisdom/${c.slug}`}
-                        className="block px-4 py-3 text-[12px] tracking-[0.18em] hover:bg-cream transition-colors"
+                        className="block px-4 py-3 text-[12px] tracking-[0.18em] hover:bg-limeSoft transition-colors"
                       >
                         {c.label}
                       </Link>
@@ -77,9 +95,9 @@ export default function SiteNav() {
               )}
             </AnimatePresence>
           </div>
-          <Link href="/blog" className="link-underline">Blog</Link>
-          <Link href="/about" className="link-underline">About</Link>
-          <Link href="/contact" className="link-underline">Contact</Link>
+          <NavLink href="/blog" active={isActive('/blog')}>Blog</NavLink>
+          <NavLink href="/about" active={isActive('/about')}>About</NavLink>
+          <NavLink href="/contact" active={isActive('/contact')}>Contact</NavLink>
         </nav>
 
         {/* Right side - mobile menu button (visible below lg) */}

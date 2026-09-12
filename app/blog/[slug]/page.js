@@ -47,7 +47,7 @@ export default function ArticlePage() {
   const dateStr = article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : ''
 
   return (
-    <article className="bg-paper">
+    <article className="bg-transparent">
       {/* HEADER */}
       <div className="container-editorial-wide pt-4 md:pt-6 pb-12">
         <Link href={`/wisdom/${cat.slug}`} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-muted link-underline">

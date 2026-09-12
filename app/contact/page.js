@@ -30,10 +30,10 @@ export default function ContactPage() {
   // Single self-contained editorial page. Sized to fit within a standard
   // desktop viewport (above the fold) with a consistent 32/48/64 rhythm.
   return (
-    <div className="bg-paper">
+    <div className="bg-transparent">
       <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14 text-center">
         {/* HERO ------------------------------------------------------- */}
-        <div className="eyebrow">Say Hello</div>
+        <div className="eyebrow-accent">Say Hello</div>
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

@@ -58,7 +58,7 @@ function Login({ onLogin }) {
   return (
     <div className="container-editorial py-24 max-w-md">
       <LogoLockup />
-      <div className="eyebrow mt-10">Admin</div>
+      <div className="eyebrow-accent mt-10">Admin</div>
       <h1 className="display mt-3 text-5xl">Editor Login.</h1>
       <form onSubmit={submit} className="mt-10 bg-white border border-rule p-8 space-y-6">
         <label className="block">
@@ -83,11 +83,11 @@ function Dashboard({ token, onLogout }) {
   useEffect(() => { refresh() }, [])
 
   return (
-    <div className="bg-paper min-h-screen">
+    <div className="bg-transparent min-h-screen">
       <div className="container-editorial py-10">
         <div className="flex items-center justify-between">
           <div>
-            <div className="eyebrow">FailureSays CMS</div>
+            <div className="eyebrow-accent">FailureSays CMS</div>
             <h1 className="display text-5xl mt-2">{view.name === 'list' ? 'Editorial Desk' : (view.id ? 'Edit Post' : 'New Post')}</h1>
           </div>
           <div className="flex items-center gap-3">
@@ -128,7 +128,7 @@ function PostList({ posts, loading, onEdit, onDeleted, token }) {
             <div className="text-xs text-subtle mt-1">/{p.slug}{p.featured ? ' · featured' : ''}</div>
           </div>
           <div className="col-span-2 text-sm text-muted">{CATEGORIES.find(c => c.slug === p.category)?.label || p.category}</div>
-          <div className="col-span-1"><span className={`text-[10px] uppercase tracking-[0.2em] px-2 py-1 border ${p.published ? 'border-black text-ink' : 'border-rule text-subtle'}`}>{p.published ? 'Live' : 'Draft'}</span></div>
+          <div className="col-span-1"><span className={`text-[10px] uppercase tracking-[0.2em] px-2 py-1 border ${p.published ? 'border-lime bg-limeSoft text-black' : 'border-rule text-subtle'}`}>{p.published ? 'Live' : 'Draft'}</span></div>
           <div className="col-span-2 text-xs text-muted">{new Date(p.updatedAt || p.createdAt).toLocaleDateString()}</div>
           <div className="col-span-1 flex justify-end gap-2">
             {p.published && <a href={`/blog/${p.slug}`} target="_blank" rel="noopener" className="p-2 hover:bg-cream" title="View"><Eye className="w-4 h-4" /></a>}

@@ -22,13 +22,16 @@ module.exports = {
       },
       colors: {
         // FailureSays brand palette
-        paper: '#F7F4EE',
-        cream: '#F7F5EF',
+        paper: '#F4F4F0',
+        cream: '#ECEBE4',
         card: '#FFFFFF',
         ink: '#000000',
         muted: '#5E5E5E',
         subtle: '#8A8A8A',
-        rule: '#DDD9CF',
+        rule: '#E3E2DB',
+        // signal accent
+        lime: '#A3E635',
+        limeSoft: '#CDEE7B',
         // shadcn compat (mapped to brand)
         border: '#DDD9CF',
         input: '#DDD9CF',

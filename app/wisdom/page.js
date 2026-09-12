@@ -26,17 +26,17 @@ export default function WisdomPage() {
   }, [all, q])
 
   return (
-    <div className="bg-paper">
+    <div className="bg-transparent">
       {/* HERO */}
       <section className="container-editorial-wide pt-4 md:pt-6 pb-10 md:pb-14 text-center">
-        <div className="eyebrow">Knowledge Hub</div>
+        <div className="eyebrow-accent">Knowledge Hub</div>
         <h1 className="page-heading mt-4">WISDOM.</h1>
         <p className="mt-8 mx-auto max-w-3xl text-lg md:text-xl text-muted leading-relaxed">
           Everything worth knowing, organized. Startup analyses, company improvement ideas, case studies, startup ideas, and failures &amp; lessons — all in one place.
         </p>
         
         {/* Search bar - centered */}
-        <div className="mt-10 mx-auto flex items-center gap-3 border border-rule bg-white px-4 py-3 max-w-md">
+        <div className="mt-10 mx-auto flex items-center gap-3 border border-rule bg-white px-4 py-3 max-w-md focus-within:border-lime transition-colors">
           <Search className="w-4 h-4 text-muted" />
           <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search all wisdom…" className="flex-1 bg-transparent outline-none text-sm" />
         </div>
@@ -48,10 +48,10 @@ export default function WisdomPage() {
           {CATEGORIES.filter(c => c.slug !== 'blog').map((c, i) => (
             <motion.div key={c.slug} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }}>
               <Link href={`/wisdom/${c.slug}`} className="card-editorial p-6 block h-full">
-                <div className="eyebrow">{String(i+1).padStart(2,'0')}</div>
+                <div className="text-[11px] uppercase tracking-[0.24em] text-lime font-semibold">{String(i+1).padStart(2,'0')}</div>
                 <div className="display text-3xl mt-4 leading-none">{c.label}</div>
                 <p className="mt-4 text-sm text-muted">{c.desc}</p>
-                <div className="mt-8 text-xs uppercase tracking-[0.24em]">Enter →</div>
+                <div className="mt-8 text-xs uppercase tracking-[0.24em]">Enter <span className="text-lime">&rarr;</span></div>
               </Link>
             </motion.div>
           ))}
