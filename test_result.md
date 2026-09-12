@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Change the admin panel password to 'qwesdfcvb'. User also reported 'MONGO_URL is not set' error when logging in on admin page."
+user_problem_statement: "Connect the app to the user's own MongoDB Atlas cluster (mongodb+srv cluster0.odprg40). Recreated missing /app/.env with MONGO_URL pointing to Atlas, DB_NAME=failuresays, ADMIN_PASSWORD=qwesdfcvb. Verify all backend endpoints work against Atlas."
 
 backend:
   - task: "Admin login with new password + Mongo-backed endpoints"
@@ -118,15 +118,21 @@ backend:
           comment: "Created /app/.env with MONGO_URL=mongodb://localhost:27017, DB_NAME=failuresays, JWT_SECRET, ADMIN_PASSWORD=qwesdfcvb and NEXT_PUBLIC_BASE_URL. Ran yarn install (deps were missing) and restarted nextjs. Verified via curl that POST /api/admin/login with 'qwesdfcvb' returns a JWT and wrong password returns 401."
         - working: true
           agent: "testing"
+          comment: "✅ ATLAS RECONNECT VERIFIED - All 17 tests passed against user's own MongoDB Atlas cluster (cluster0.odprg40, fresh 'failuresays' DB). Full CMS lifecycle (login/verify, post CRUD, publish/draft, public articles, single article, search, contact, admin messages, delete) working. NO 'MONGO_URL is not set' and NO SSL/TLS errors. Root cause of earlier TLS alert 80 was Atlas Network Access IP allowlist; resolved after user whitelisted the IP."
+        - working: true
+          agent: "testing"
           comment: "All 11 backend tests passed: login (correct/wrong/missing password), verify (with/without token), public /api/articles, admin posts CRUD, and admin messages. 'MONGO_URL is not set' error is RESOLVED."
         - working: true
           agent: "testing"
           comment: "✅ ALL 11 TESTS PASSED - Admin password change and Mongo connectivity verified successfully. (1) POST /api/admin/login with password 'qwesdfcvb' returns 200 with JWT token. (2) Wrong password returns 401 'Invalid password'. (3) No body returns 400 'Password required'. (4) GET /api/admin/verify with Bearer token returns {ok:true}. (5) Without token returns {ok:false}. (6) GET /api/articles returns 200 with articles array - CRITICAL: NO 'MONGO_URL is not set' error found. (7-11) All admin CRUD endpoints working: POST /api/admin/posts creates post, GET /api/admin/posts lists posts, PUT /api/admin/posts/:id updates post with publishedAt logic, GET /api/admin/messages retrieves messages, DELETE /api/admin/posts/:id deletes post. All Mongo operations successful. Test post created, updated, and cleaned up successfully. The 'MONGO_URL is not set' error reported by user is RESOLVED."
+        - working: true
+          agent: "testing"
+          comment: "✅ ALL 17 COMPREHENSIVE TESTS PASSED - MongoDB Atlas cluster verification complete. Fresh 'failuresays' database tested successfully. CRITICAL VERIFICATIONS: (1) NO 'MONGO_URL is not set' error - Atlas connection working. (2) NO SSL/TLS errors detected. COMPLETE CMS LIFECYCLE: (1) POST /api/admin/login with 'qwesdfcvb' returns 200 with JWT. (2) Wrong password returns 401. (3) No body returns 400. (4) GET /api/admin/verify with Bearer token returns {ok:true}. (5) Without token returns {ok:false}. (6) GET /api/articles returns 200 with empty array (fresh DB). (7) POST /api/admin/posts creates draft with auto-slug='atlas-mongodb-test-post-2025', readingTime=1min, publishedAt=null. (8) GET /api/admin/posts lists 1 post (auth required). (9) PUT /api/admin/posts/:id publishes post, sets publishedAt timestamp. (10) GET /api/articles shows published article, content field excluded. (11) GET /api/articles/:slug returns full article with content. (12) GET /api/search?q=Atlas returns 1 result with categoryLabel='Blog', no content field. (13) POST /api/contact submits message successfully. (14) POST /api/contact without message returns 400. (15) GET /api/admin/messages lists 1 message (auth required). (16) DELETE /api/admin/posts/:id deletes test post. (17) GET /api/articles/:slug returns 404 after deletion. All Mongo-backed operations successful against Atlas cluster. Test data cleaned up. Backend production-ready."
 
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 1
+  test_sequence: 2
   run_ui: false
 
 test_plan:
@@ -141,6 +147,8 @@ agent_communication:
       message: "Please verify the admin flow end-to-end via API: (1) POST /api/admin/login with body {\"password\":\"qwesdfcvb\"} returns 200 and a token; (2) POST /api/admin/login with wrong password returns 401; (3) GET /api/admin/verify with Bearer token returns {ok:true}; (4) confirm no 'MONGO_URL is not set' error by hitting a Mongo-backed endpoint like GET /api/articles (should return 200 with an array, empty is fine); (5) create a post via authenticated POST /api/posts (or the correct admin route in route.js) if available, then list/get/delete. Use base URL from NEXT_PUBLIC_BASE_URL in /app/.env. Do NOT change env values."
     - agent: "testing"
       message: "✅ BACKEND TESTING COMPLETE - ALL 11 TESTS PASSED. Admin password 'qwesdfcvb' is working correctly. The 'MONGO_URL is not set' error is RESOLVED - all Mongo-backed endpoints (GET /api/articles, POST /api/admin/posts, GET /api/admin/posts, PUT /api/admin/posts/:id, GET /api/admin/messages, DELETE /api/admin/posts/:id) are functioning correctly. Full CRUD lifecycle tested: created test post, updated it (published=true, publishedAt set), listed posts, retrieved messages, and deleted test post. All authentication flows working (login with correct/wrong password, verify with/without token). No critical issues found. Backend is production-ready."
+    - agent: "testing"
+      message: "✅ COMPREHENSIVE ATLAS VERIFICATION COMPLETE - ALL 17 TESTS PASSED. MongoDB Atlas cluster (mongodb+srv://...cluster0.odprg40.mongodb.net) with fresh 'failuresays' database fully operational. CRITICAL: NO 'MONGO_URL is not set' error, NO SSL/TLS errors. Complete CMS lifecycle verified: admin authentication (correct/wrong/missing password), token verification, draft post creation (auto-slug, readingTime, publishedAt=null), post publishing (publishedAt set), public article listing (content excluded), single article retrieval (full content), search with categoryLabel (no content), contact form submission with validation, admin messages retrieval, post deletion with 404 verification. All 17 test scenarios passed. Test data cleaned up. Backend production-ready against Atlas."
 
 
 user_problem_statement: |
