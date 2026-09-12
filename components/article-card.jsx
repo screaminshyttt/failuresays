@@ -47,7 +47,7 @@ export default function ArticleCard({ article, variant = 'default', dark = false
             <span className={`badge-cat ${dark ? '!bg-lime' : ''}`}>{cat.label}</span>
             <span className={`text-[11px] uppercase tracking-[0.22em] ${dark ? 'text-paper/60' : 'text-subtle'}`}>{article.readingTime} min read</span>
           </div>
-          <h3 className={`mt-4 ${variant === 'large' ? 'display text-3xl md:text-5xl leading-[0.95]' : 'text-xl md:text-2xl font-semibold leading-tight'} ${dark ? 'text-paper' : ''}`}>
+          <h3 className={`mt-4 ${variant === 'large' ? 'display text-3xl md:text-5xl leading-[0.95]' : 'display text-2xl md:text-3xl leading-[0.95]'} ${dark ? 'text-paper' : ''}`}>
             {article.title}
           </h3>
           {article.excerpt && (
